@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_mao/location_traking.dart';
-import 'package:google_mao/api_page.dart';
 import 'dart:io';
+
+import 'package:google_mao/components/crud/list_page.dart';
+import 'package:google_mao/components/map/location_traking.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();

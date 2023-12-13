@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_mao/api/api_services.dart';
-import 'package:google_mao/form_page.dart';
+import 'package:google_mao/components/crud/form_page.dart';
 import 'package:google_mao/models/brands.dart';
 
 class APIHomeScreen extends StatefulWidget {
