@@ -77,7 +77,8 @@ class _FormScreenState extends State<FormScreen> {
                         }
                       });
                     },
-                    // color: Colors.orange[600],
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange),
                     child: Text(
                       // ignore: unnecessary_null_comparison
                       widget.brand == null
