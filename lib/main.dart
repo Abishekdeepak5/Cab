@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_mao/location_traking.dart';
+import 'package:google_mao/api_page.dart';
+import 'dart:io';
 
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -21,7 +33,8 @@ class MyApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-      home: const LocationTracking(),
+      // home: const LocationTracking(),
+      home: const APIHomeScreen(),
     );
   }
 }
