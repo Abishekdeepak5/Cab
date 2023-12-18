@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DrawerWidget extends StatelessWidget {
    DrawerWidget({super.key});
+   final List<String> items = List.generate(100, (index) => 'Item $index');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
