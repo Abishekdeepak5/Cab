@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:google_mao/components/crud/list_page.dart';
 import 'package:google_mao/components/map/location_traking.dart';
+import 'package:google_mao/ui/passengerDetailPage/home_screen.dart';
 import 'package:google_mao/ui/signIn.dart';
 
 void main() {
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
       ),
       // home: const LocationTracking(),
       // home: const APIHomeScreen(),
-      home: SignInPage(),
+      home: const HomeScreen(),
     );
   }
 }
