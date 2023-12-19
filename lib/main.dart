@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:google_mao/components/crud/list_page.dart';
 import 'package:google_mao/components/map/location_traking.dart';
+import 'package:google_mao/ui/signIn.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
@@ -35,7 +36,8 @@ class MyApp extends StatelessWidget {
         ),
       ),
       // home: const LocationTracking(),
-      home: const APIHomeScreen(),
+      // home: const APIHomeScreen(),
+      home: SignInPage(),
     );
   }
 }
