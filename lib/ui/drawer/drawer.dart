@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class DrawerWidget extends StatelessWidget {
-   DrawerWidget({super.key});
-   final List<String> items = List.generate(100, (index) => 'Item $index');
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue.shade300,
-        title: const Text('Drawer Example'),
-      ),
-      drawer:const MyDrawer(), 
-      body: const Center(
-        child: Text("Main")),
-      );
-  }
-}
+// class DrawerWidget extends StatelessWidget {
+//    DrawerWidget({super.key});
+//    final List<String> items = List.generate(100, (index) => 'Item $index');
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         backgroundColor: Colors.blue.shade300,
+//         title: const Text('Drawer Example'),
+//       ),
+//       drawer:const MyDrawer(), 
+//       body: const Center(
+//         child: Text("Main")),
+//       );
+//   }
+// }
 
 
 
@@ -56,11 +56,11 @@ class _MyDrawerState extends State<MyDrawer> {
                 const Text("Avecsage@gmail.com"),
               ]),
             ),
-          buildListTile(0,context,Icons.home, 'Home', () {print("Home");}),
-          buildListTile(1,context,Icons.book, 'Trip History', () {}),
+          buildListTile(0,context,Icons.home, 'Home', () {}),
+          buildListTile(1,context,FontAwesomeIcons.squarePollVertical, 'Trip History', () {}),
           buildListTile(2,context,Icons.person, 'Profile', () {}),
           buildListTile(3,context,Icons.favorite, 'Reports', () {}),
-          buildListTile(4,context,Icons.chat, 'Status', () {}),
+          buildListTile(4,context,FontAwesomeIcons.briefcase, 'Status', () {}),
           buildListTile(5,context,Icons.settings, 'Settings', () {}),
         ],
       ),

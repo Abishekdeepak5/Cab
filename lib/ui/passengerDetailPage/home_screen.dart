@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_mao/ui/drawer/drawer.dart';
 import 'package:google_mao/ui/passengerDetailPage/inputWidget.dart';
+import 'package:google_mao/ui/signin.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -40,13 +41,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SignInPage()),
+            );
+            },
             icon: const Icon(
-              Icons.output_outlined,
+              Icons.login,
               size: 28,
             ),
-          )
+          ),
+          // IconButton(
+          //   onPressed: () {},
+          //   icon: const Icon(
+          //     Icons.output_outlined,
+          //     size: 28,
+          //   ),
+          // ),
+
         ],
+
       ),
       // drawer
       drawer: const MyDrawer(),
@@ -113,7 +128,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-            )
+            ),
+            
           ],
         ),
       ),
