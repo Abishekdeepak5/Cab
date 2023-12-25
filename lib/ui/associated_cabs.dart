@@ -11,7 +11,6 @@ class AssociatedCabsState extends State<AssociatedCabs> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // leading icon for seeing the user profile
         leading: Builder(builder: (context) {
           return IconButton(
             onPressed: () {
@@ -23,7 +22,6 @@ class AssociatedCabsState extends State<AssociatedCabs> {
             ),
           );
         }),
-
         title: const Text(
           "Associated Cabs",
           style: TextStyle(
@@ -32,9 +30,7 @@ class AssociatedCabsState extends State<AssociatedCabs> {
             fontWeight: FontWeight.w500,
           ),
         ),
-
         centerTitle: true,
-
         actions: [
           IconButton(
             onPressed: () {
