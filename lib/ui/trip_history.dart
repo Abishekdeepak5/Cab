@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TripHistoryPage extends StatelessWidget {
+  const TripHistoryPage({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -9,8 +10,8 @@ class TripHistoryPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 20),
-            Center(
+            const SizedBox(height: 20),
+            const Center(
               child: Text(
                 'Trip History',
                 style: TextStyle(
@@ -19,14 +20,14 @@ class TripHistoryPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 20),
-            Container(
+            const SizedBox(height: 20),
+            SizedBox(
               width: double.infinity,
               child: TextField(
                 decoration: InputDecoration(
                   contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                  prefixIcon: Icon(Icons.search),
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                  prefixIcon: const Icon(Icons.search),
                   hintText: 'Search...',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
