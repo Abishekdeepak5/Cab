@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:google_mao/ui/passengerDetailPage/home_screen.dart';
+import 'package:google_mao/provider/drawerprovider.dart';
+import 'package:google_mao/ui/home_screen.dart';
 import 'dart:io';
-// import 'package:google_mao/ui/home.dart';
-// import 'package:google_mao/ui/trip_history.dart';
-// import 'package:google_mao/ui/associated_cabs.dart';
-// import 'package:google_mao/components/crud/list_page.dart';
-// import 'package:google_mao/components/map/location_traking.dart';
-// import 'package:google_mao/components/user_crud/webapi.dart';
-// import 'package:google_mao/ui/passengerDetailPage/home_screen.dart';
-// import 'package:google_mao/ui/signIn.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => PageChange()),
+        // Provider(create: (context) => SomeOtherClass()),
+      ],
+    child:const MyApp()),);
 }
 
 class MyHttpOverrides extends HttpOverrides {
@@ -30,7 +30,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return 
+    MaterialApp(
       title: 'Avecsage',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

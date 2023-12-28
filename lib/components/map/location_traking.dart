@@ -157,13 +157,13 @@ class LocationTrackingState extends State<LocationTracking> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text(
-            "MeterPro",
-            style: TextStyle(
-                color: Colors.yellow,
-                fontSize: 20,
-                fontStyle: FontStyle.italic),
-          ),
+          // title: const Text(
+          //   "MeterPro",
+          //   style: TextStyle(
+          //       color: Colors.yellow,
+          //       fontSize: 20,
+          //       fontStyle: FontStyle.italic),
+          // ),
         ),
         body: SafeArea(
           child: Center(
