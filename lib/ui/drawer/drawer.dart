@@ -71,3 +71,69 @@ class _MyDrawerState extends State<MyDrawer> {
   }
 }
 
+//  Future<void> getCurrentLocation() async {
+//     _locationData = await location.getLocation();
+// print(_locationData?.latitude);
+//     if(_locationData!=null){
+//       setState(() {
+//         print("State");
+//         _currentP=LatLng(_locationData!.latitude!, _locationData!.longitude!);
+//       });
+//     }
+
+//  }
+
+
+  // void _simulateLocationChange() async {
+    // if(_currentP==null){
+    //   print("click");
+    //   getLocationUpdate();
+    // }
+    // Simulate location changes
+    // for (double lat = 9.9252007, lon =78.1197754; lat <= 37.8049; lat += 0.001, lon += 0.001) {
+    //   await Future.delayed(Duration(milliseconds: 1500));
+    //   setState(() {
+    //     _currentP = LatLng(lat,lon);
+    //     _pGooglePlex=_currentP!;
+    //   });
+    // }
+//     }
+// }
+
+
+
+//permission Get
+      // serviceEnabled = await location.serviceEnabled();
+        // if (!serviceEnabled!) {
+        //   serviceEnabled = await location.requestService();
+        //   if (!serviceEnabled!) {
+        //     return;
+        //   }
+        // }
+
+        // permissionGranted = await location.hasPermission();
+        // if (permissionGranted == PermissionStatus.denied) {
+        //   permissionGranted = await location.requestPermission();
+        //   if (permissionGranted != PermissionStatus.granted) {
+        //     return;
+        //   }
+        // }
+        
+
+//
+    // location.onLocationChanged.listen((LocationData currentLoc) {
+       // if (currentLoc.latitude != null &&
+       //         currentLoc.longitude != null) {
+       //       setState(() {
+       //         currentLocation =LatLng(currentLoc.latitude!, currentLoc.longitude!);
+       //         _pGooglePlex=currentLocation!;
+       //       });
+       //     }
+       // });
+
+//print
+
+     // for (var element in polylineCoordinates) {
+      // ignore: avoid_print
+      // print("Hello ${element.latitude} and ${element.longitude}");
+      // }

@@ -14,7 +14,7 @@ class LocationTracking extends StatefulWidget {
 class LocationTrackingState extends State<LocationTracking> {
   double totalDistance = 0;
   String? currentAddress = '';
-  LocationData? currentLocation = null;
+  LocationData? currentLocation;
   final Location location = Location();
   List<LatLng> polylineCoordinates = [];
   StreamSubscription<LocationData>? locationSubscription;
@@ -60,7 +60,7 @@ class LocationTrackingState extends State<LocationTracking> {
       getAddress();
       focusToCurrentLocation();
     } catch (e) {
-      print(e);
+      // print(e);
     }
   }
 
@@ -88,6 +88,7 @@ class LocationTrackingState extends State<LocationTracking> {
       setState(() {
         currentAddress =
             '${place.street}, ${place.subLocality}, ${place.subAdministrativeArea}, ${place.postalCode}';
+          print(currentAddress);
       });
     }).catchError((e) {
       debugPrint(e);
@@ -98,12 +99,13 @@ class LocationTrackingState extends State<LocationTracking> {
     polylineCoordinates = [];
     GoogleMapController googleMapController = await _controller.future;
     locationSubscription = location.onLocationChanged.handleError((onError) {
-      print(onError);
+      // print(onError);
       locationSubscription?.cancel();
       setState(() {
         locationSubscription = null;
       });
     }).listen((LocationData updatedLocation) {
+
       googleMapController.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
@@ -156,7 +158,7 @@ class LocationTrackingState extends State<LocationTracking> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
+        // appBar: AppBar(
           // title: const Text(
           //   "MeterPro",
           //   style: TextStyle(
@@ -164,7 +166,7 @@ class LocationTrackingState extends State<LocationTracking> {
           //       fontSize: 20,
           //       fontStyle: FontStyle.italic),
           // ),
-        ),
+        // ),
         body: SafeArea(
           child: Center(
             child: Column(
@@ -179,9 +181,9 @@ class LocationTrackingState extends State<LocationTracking> {
                         'Charge: \$ ${(totalDistance * 2.66).toStringAsFixed(1)}'),
                   ],
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 15),
                 Center(child: Text('Address: $currentAddress')),
-                const SizedBox(height: 30),
+                const SizedBox(height: 15),
                 Center(
                   child: ElevatedButton(
                     onPressed: getLocation,
