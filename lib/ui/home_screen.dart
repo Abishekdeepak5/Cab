@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_mao/Hubs/client_listen.dart';
 import 'package:google_mao/components/map/location_traking.dart';
 import 'package:google_mao/components/map/trip_map.dart';
+import 'package:google_mao/components/user_crud/webapi.dart';
 import 'package:google_mao/provider/drawerprovider.dart';
 import 'package:google_mao/ui/drawer/drawer.dart';
 import 'package:google_mao/ui/passengerDetailPage/cabconstriant.dart';
 import 'package:google_mao/ui/signin.dart';
+import 'package:google_mao/ui/streamWidget.dart';
 import 'package:google_mao/ui/trip_history.dart';
 import 'package:provider/provider.dart';
 
@@ -19,10 +22,14 @@ class _HomeScreenState extends State<HomeScreen> {
   //  final int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const LocationTrack(),
-    const LocationTracking(),
-    const CabContriant(),
-    const TripHistoryPage(),
+    
+    // const LocationTracking(),
+    // MyStream(),
+    ClientListen()
+    // const LocationTrack(),
+    // MyHomePagenew(),
+    // const CabContriant(),
+    // const TripHistoryPage(),
   ];
   @override
   Widget build(BuildContext context) {

@@ -1,10 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:google_mao/api/api_service.dart';
 import 'package:google_mao/components/constants.dart';
+import 'package:google_mao/components/user_crud/update_location.dart';
+import 'package:google_mao/models/LocationModel.dart';
+import 'package:google_mao/provider/locationprovider.dart';
 import 'package:location/location.dart';
 import 'dart:math' show cos, sqrt, asin;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
+import 'package:provider/provider.dart';
 
 class LocationTrack extends StatefulWidget {
   const LocationTrack({super.key});
@@ -24,17 +29,25 @@ class _LocationTrackState extends State<LocationTrack> {
   StreamSubscription<LocationData>? locationSubscription;
   bool isCameraFollow=true;
   List<LatLng> polylineCoordinates = [];
-  String? currentAddress = '';
+  String currentAddress = '';
   double totalDistance = 0;
+
+  
+  final ApiTripService tripService = ApiTripService();
 
   @override
   void initState() {
+    
     getInitialLocation();
     super.initState();
   }
 
   @override
   void dispose() {
+    totalDistance = 0;
+    currentAddress = '';
+    polylineCoordinates = [];
+    stopListening();
     super.dispose();
   }
 
@@ -83,19 +96,57 @@ class _LocationTrackState extends State<LocationTrack> {
                         ],
                       ),
                     ),),
-                    RichText(
+                    // RichText(
+                    //   text: TextSpan(
+                    //     style: DefaultTextStyle.of(context).style,
+                    //     children: <TextSpan>[
+                    //      TextSpan(text: 'Address: ', style: TextStyle(
+                    //           fontWeight: FontWeight.bold,
+                    //           color: pinkColor,
+                    //         ),),
+                    //       TextSpan(
+                    //         text: currentAddress,
+                    //       ),
+                    //       ],
+                    //   ),),
+
+                    
+                    SizedBox(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+
+                        RichText(
                       text: TextSpan(
                         style: DefaultTextStyle.of(context).style,
                         children: <TextSpan>[
-                         TextSpan(text: 'Address: ', style: TextStyle(
+                         TextSpan(text: 'Latitude: ', style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: pinkColor,
                             ),),
                           TextSpan(
-                            text: '$currentAddress',
+                            text: '${Provider.of<getLatitudeLongitude>(context).latitude}',
                           ),
                           ],
                       ),),
+                      RichText(
+                      text: TextSpan(
+                        style: DefaultTextStyle.of(context).style,
+                        children: <TextSpan>[
+                         TextSpan(text: 'Longitude: ', style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: pinkColor,
+                            ),),
+                          TextSpan(
+                            text: '${Provider.of<getLatitudeLongitude>(context).longitude}',
+                          ),
+                          ],
+                      ),), 
+                        ],
+                      ),
+                    ),
+
+
                       
                     SizedBox(
                       child: Row(
@@ -183,8 +234,14 @@ class _LocationTrackState extends State<LocationTrack> {
             currentLocation =LatLng(_locationData!.latitude!, _locationData!.longitude!);
             _pGooglePlex=currentLocation!;
             focusLocation();
-            getAddress();
+           
           });
+         
+          //  try{
+          //   getAddress();
+          //   }catch(err){
+          //     print(err);
+          //   }
 
   }
 
@@ -210,6 +267,7 @@ class _LocationTrackState extends State<LocationTrack> {
           ),
         ),
       );}
+      updateLatLng(LatLng(updatedLocation.latitude!,updatedLocation.longitude!));
 
       var isLatitudeExist = polylineCoordinates
           .where((element) => element.latitude == updatedLocation.latitude);
@@ -219,17 +277,21 @@ class _LocationTrackState extends State<LocationTrack> {
           updatedLocation.longitude != currentLocation!.longitude &&
           isLatitudeExist.isEmpty &&
           isLongitudeExist.isEmpty) {
+            
       currentLocation=LatLng(updatedLocation.latitude!,updatedLocation.longitude!);
           drawPolyLine(updatedLocation.latitude!, updatedLocation.longitude!);
       
           }
       });
-   
-   
 
   }
 
-  
+  Future<void> updateLatLng(LatLng loc) async {
+    Trip trip = Trip(id: 3, latitude:loc.latitude,longitude:loc.longitude);
+    tripService.updateLocations(trip);
+
+  }
+
   Future<void> focusLocation() async {
     GoogleMapController googleMapController = await _mapController.future;
     googleMapController.animateCamera(
@@ -253,11 +315,8 @@ class _LocationTrackState extends State<LocationTrack> {
         .then((List<geocoding.Placemark> placemarks) {
       geocoding.Placemark place = placemarks[0];
       setState(() {
-        currentAddress =
-            '${place.street}, ${place.subLocality}, ${place.postalCode}';
+        currentAddress ='${place.street}, ${place.subLocality}, ${place.postalCode}';
       });
-      // ${place.street},
-      print(currentAddress);
     }).catchError((e) {
       debugPrint(e);
     });
@@ -288,6 +347,18 @@ class _LocationTrackState extends State<LocationTrack> {
     setState(() {});
   }
   
+  stopListening() {
+    locationSubscription?.cancel();
+    setState(() {
+      locationSubscription = null;
+    });
+  }
+
+  endTrip() {
+    stopListening();
+  }
+
+
   void changeCameraAction(bool val) {
     setState(() {
       isCameraFollow=val;

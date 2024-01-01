@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:provider/provider.dart';
 
 void main() {
-  // HttpOverrides.global = MyHttpOverrides();
+  HttpOverrides.global = MyHttpOverrides();
   runApp(
     MultiProvider(
       providers: [
