@@ -1,7 +1,7 @@
 import 'package:google_mao/models/brands.dart';
 import 'package:http/http.dart' show Client;
 
-class ApiService {
+class ApiSampleService {
   final String baseUrl = "https://fakestoreapi.com";
   Client client = Client();
 

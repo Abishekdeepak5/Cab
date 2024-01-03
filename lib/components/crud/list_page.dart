@@ -12,12 +12,12 @@ class APIHomeScreen extends StatefulWidget {
 }
 
 class APIScreen extends State<APIHomeScreen> {
-  ApiService? apiService;
+  ApiSampleService? apiService;
 
   @override
   void initState() {
     super.initState();
-    apiService = ApiService();
+    apiService = ApiSampleService();
   }
 
   @override

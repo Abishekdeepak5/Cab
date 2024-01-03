@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_mao/api/api_service.dart';
+import 'package:google_mao/api/trip_api_service.dart';
 import 'package:google_mao/models/LocationModel.dart';
 // import 'package:google_mao/models/brands.dart';
 // import 'package:google_mao/api/api_services.dart';
@@ -20,7 +20,7 @@ class _UpdateLocationState extends State<UpdateLocation> {
   
   
   bool _isLoading = false;
-  final ApiTripService tripService = ApiTripService();
+  final TripApiService tripService = TripApiService();
   late bool _isFieldNameValid;
   final TextEditingController _controllerName = TextEditingController();
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_mao/provider/drawerprovider.dart';
+import 'package:google_mao/provider/stateprovider.dart';
+import 'package:google_mao/provider/locationprovider.dart';
 import 'package:google_mao/ui/home_screen.dart';
+import 'package:google_mao/ui/signin.dart';
 import 'dart:io';
 import 'package:provider/provider.dart';
 
@@ -9,8 +11,8 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => PageChange()),
-        // Provider(create: (context) => SomeOtherClass()),
+        ChangeNotifierProvider(create: (context) => StateProvider()),
+        // Provider(create: (context) => getLatitudeLongitude()),
       ],
     child:const MyApp()),);
 }
@@ -42,7 +44,8 @@ class MyApp extends StatelessWidget {
         ),
       ),
 
-      home: const HomeScreen(), 
+      home:
+      Provider.of<StateProvider>(context).token==""?SignInPage():HomeScreen(), 
     );
   }
 }

@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_mao/api/user_api.dart';
 import 'package:google_mao/components/constants.dart';
+import 'package:google_mao/models/login.dart';
+import 'package:google_mao/provider/stateprovider.dart';
+import 'package:google_mao/ui/home_screen.dart';
+import 'package:provider/provider.dart';
 
 class SignInPage extends StatefulWidget {
    const SignInPage({super.key});
@@ -9,6 +14,7 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  final UserApiService userService=UserApiService();
    late final TextEditingController _emailController;
 
   late final TextEditingController _passwordController;
@@ -112,14 +118,20 @@ class _SignInPageState extends State<SignInPage> {
                     // decoration:BorderRadius(0),
                     onPressed: () {
                       // Implement sign-in logic here
-                      String email = _emailController.text;
+                      String username = _emailController.text;
                       String password = _passwordController.text;
+                      Login user=Login(username: username,password: password);
+                      userService.LoginUser(user).then((value) {
+                        Provider.of<StateProvider>(context,listen:false).setToken(value);
+                        Navigator.of(context).canPop()?
+                          Navigator.pop(context, true):
+                          Navigator.pushReplacement(
+                            context,MaterialPageRoute(builder: (context) => const HomeScreen()),
+            );
+                      });
+                      
             
-                      // Add your authentication logic or navigate to the next screen
-                      // For example, you can use FirebaseAuth for authentication
-                      // ignore: avoid_print
-                      print('Email: $email, Password: $password');
-                    },
+                      },
                     child: const Text('Sign In',style: TextStyle(fontSize: 18,color: Colors.white),),
                   ),
                 ],

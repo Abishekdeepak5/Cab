@@ -17,7 +17,7 @@ class FormScreen extends StatefulWidget {
 
 class _FormScreenState extends State<FormScreen> {
   bool _isLoading = false;
-  final ApiService _apiService = ApiService();
+  final ApiSampleService _apiService = ApiSampleService();
   late bool _isFieldNameValid;
   final TextEditingController _controllerName = TextEditingController();
 

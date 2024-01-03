@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_mao/api/api_service.dart';
+import 'package:google_mao/api/trip_api_service.dart';
 import 'package:google_mao/components/constants.dart';
 import 'package:google_mao/components/user_crud/update_location.dart';
 import 'package:google_mao/models/LocationModel.dart';
@@ -33,7 +33,7 @@ class _LocationTrackState extends State<LocationTrack> {
   double totalDistance = 0;
 
   
-  final ApiTripService tripService = ApiTripService();
+  final TripApiService tripService = TripApiService();
 
   @override
   void initState() {

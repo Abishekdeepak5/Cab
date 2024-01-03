@@ -5,8 +5,13 @@ class getLatitudeLongitude with ChangeNotifier{
   double lng=0;
   double get latitude=>lat;
   double get longitude=>lng;
-  void listenLocation(){
-    
+  updateLocation(Object latitude,Object longitude){
+    try{
+    lat=double.parse(latitude.toString());
+    lng=double.parse(longitude.toString());
+    }catch(err){
+      print("$err");
+    }
     notifyListeners();
   }
 }

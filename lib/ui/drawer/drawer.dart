@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_mao/provider/drawerprovider.dart';
+import 'package:google_mao/provider/stateprovider.dart';
 import 'package:provider/provider.dart';
 
 
@@ -37,7 +37,7 @@ class _MyDrawerState extends State<MyDrawer> {
                     style: TextStyle(fontSize: 30.0, color: Colors.blue),
                   ),
                 ),
-                const Text( "Avecsage"),
+                Text( Provider.of<StateProvider>(context).firstName!=""?"${Provider.of<StateProvider>(context).firstName} ${Provider.of<StateProvider>(context).lastName}" :"Avecsage"),
                 const Text("Avecsage@gmail.com"),
               ]),
             ),
@@ -54,7 +54,7 @@ class _MyDrawerState extends State<MyDrawer> {
   }
 
   ListTile buildListTile(int index,BuildContext context,IconData icon, String title) {
-    _selectedIndex=Provider.of<PageChange>(context).pageIndex;
+    _selectedIndex=Provider.of<StateProvider>(context).pageIndex;
     return ListTile(
       tileColor: _selectedIndex == index ? Colors.pink.withOpacity(0.2) : null,
       leading: Icon(icon
@@ -64,7 +64,7 @@ class _MyDrawerState extends State<MyDrawer> {
       ,size: 18
       ,color: _selectedIndex == index ?Colors.pink:null,),
       onTap: () {
-         Provider.of<PageChange>(context,listen:false).changePage(index);
+         Provider.of<StateProvider>(context,listen:false).changePage(index);
         Navigator.pop(context);
        },
     );

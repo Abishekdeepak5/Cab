@@ -1,6 +1,6 @@
 // import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:google_mao/api/api_service.dart';
+import 'package:google_mao/api/trip_api_service.dart';
 import 'package:google_mao/components/user_crud/update_location.dart';
 import 'package:google_mao/models/LocationModel.dart';
 
@@ -13,11 +13,11 @@ class MyHomePagenew extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePagenew> {
-    ApiTripService? apiService;
+    TripApiService? apiService;
   @override
   void initState() {
     super.initState();
-    apiService=ApiTripService();
+    apiService=TripApiService();
   }
 
 
