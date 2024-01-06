@@ -21,4 +21,15 @@ class UserApiService {
       return UserDetail(firstname: "Hello", lastname: "Hello", token:"");
     }
   }
+
+  Future<bool> checkToken(String token) async{
+    final response = await client.get(Uri.parse("$baseUrl/validate"));
+    if (response.statusCode == 400){
+       return false;
+    }
+    else {
+      print(response.statusCode);
+      return true;
+     }
   }
+}

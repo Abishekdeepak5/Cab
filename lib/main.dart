@@ -44,8 +44,9 @@ class MyApp extends StatelessWidget {
         ),
       ),
 
-      home:
-      Provider.of<StateProvider>(context).token==""?SignInPage():HomeScreen(), 
+      // home:
+      // Provider.of<StateProvider>(context).Token==""?SignInPage(): HomeScreen(),
+      home:SignInPage() ,
     );
   }
 }

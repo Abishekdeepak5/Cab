@@ -7,10 +7,15 @@ class StateProvider with ChangeNotifier{
   String firstname="";
   String lastname="";
   String token="";
+    String carNum="";
+  // bool loginLoad=false;
+  // bool get loginLoader=>loginLoad;
   double get latitude=>lat;
   double get longitude=>lng;
+  String get carNumber=>carNum;
   String get firstName=>firstname;
   String get lastName=>lastname;
+  String get Token=>token;
   int get pageIndex =>_pageIndex;
   void changePage(int indexval){
     _pageIndex=indexval;
@@ -34,5 +39,16 @@ class StateProvider with ChangeNotifier{
     lastname=user.lastname;
     notifyListeners();
   }
+
+  void setCarNumber(String carNumber) {
+    carNum=carNumber;
+    notifyListeners();
+  }
+
+  // setSignInLoader(bool val){
+  //   print("Bool $val");
+  //   loginLoad=val;
+  //   notifyListeners();
+  // }
 
 }

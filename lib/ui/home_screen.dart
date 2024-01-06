@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_mao/Hubs/client_listen.dart';
+import 'package:google_mao/api/user_api.dart';
 import 'package:google_mao/components/map/location_traking.dart';
 import 'package:google_mao/components/map/trip_map.dart';
 import 'package:google_mao/components/user_crud/webapi.dart';
@@ -17,9 +18,31 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-   
-  //  final int _currentIndex = 0;
 
+ UserApiService user=UserApiService();
+  @override
+  void initState(){
+    super.initState();
+  }
+   Future<void> checkToken(BuildContext context)async {
+          String token=Provider.of<StateProvider>(context).Token;
+          if(token!=""){
+            bool isValid=await user.checkToken(token);
+            if(!isValid){
+               Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => SignInPage()),
+            );
+            }
+            print(token);
+            
+          }
+          else{
+             Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const SignInPage()),
+            );
+          }
+   }
   final List<Widget> _pages = [
     
     // const LocationTracking(),
@@ -27,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // ClientListen()
     // const LocationTrack(),
     // MyHomePagenew(),
-    const CabContriant(),
+    CabContriant(),
     // const TripHistoryPage(),
   ];
   @override
