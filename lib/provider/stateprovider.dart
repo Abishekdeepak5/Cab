@@ -8,6 +8,7 @@ class StateProvider with ChangeNotifier{
   String lastname="";
   String token="";
     String carNum="";
+    int carid=0;
   // bool loginLoad=false;
   // bool get loginLoader=>loginLoad;
   double get latitude=>lat;
@@ -16,6 +17,8 @@ class StateProvider with ChangeNotifier{
   String get firstName=>firstname;
   String get lastName=>lastname;
   String get Token=>token;
+  int get carId=>carid;
+
   int get pageIndex =>_pageIndex;
   void changePage(int indexval){
     _pageIndex=indexval;
@@ -40,8 +43,9 @@ class StateProvider with ChangeNotifier{
     notifyListeners();
   }
 
-  void setCarNumber(String carNumber) {
+  void setCarNumber(String carNumber,int id) {
     carNum=carNumber;
+    carid=id;
     notifyListeners();
   }
 

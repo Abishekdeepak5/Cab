@@ -3,7 +3,9 @@ import 'package:google_mao/models/LocationModel.dart';
 import 'package:http/http.dart' show Client;
 
 class TripApiService {
-  final String baseUrl = "https://localhost:7048/api";
+  // final String baseUrl = "https://localhost:7048/api";
+  
+  final String baseUrl = "https://meterproservice.azurewebsites.net/api";
   Client client = Client();
 
   void getLocations() async {

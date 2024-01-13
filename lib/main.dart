@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_mao/components/map/trip_map.dart';
 import 'package:google_mao/provider/stateprovider.dart';
 import 'package:google_mao/provider/locationprovider.dart';
 import 'package:google_mao/ui/home_screen.dart';
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
       // home:
       // Provider.of<StateProvider>(context).Token==""?SignInPage(): HomeScreen(),
       home:SignInPage() ,
+      // home:const HomeScreen(),
     );
   }
 }

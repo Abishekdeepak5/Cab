@@ -116,7 +116,7 @@ class _SignInPageState extends State<SignInPage> {
                         ),
                         onPressed: () {
                           //  String username = _emailController.text;
-                            // String password = _passwordController.text;
+                          //   String password = _passwordController.text;
   
                           setLoad(true);
                           // Login user=Login(username: username,password: password);
@@ -133,8 +133,8 @@ class _SignInPageState extends State<SignInPage> {
                             );
                             }
                             else{
-                              setLoad(false);
-                              print("login Fail");
+                              setLoad(false);  
+                                _displayMessage(context, 'Login Failed', const Duration(seconds: 3));                            
                             }
                           });
                           
@@ -160,3 +160,12 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 }
+
+ void _displayMessage(BuildContext context, String message, Duration duration) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: duration,
+      ),
+    );
+  }

@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:google_mao/api/cab_service.dart';
 import 'package:google_mao/api/trip_api_service.dart';
 import 'package:google_mao/components/constants.dart';
 import 'package:google_mao/components/user_crud/update_location.dart';
+// import 'package:geocoder/geocoder.dart';
 import 'package:google_mao/models/LocationModel.dart';
-import 'package:google_mao/provider/locationprovider.dart';
+import 'package:google_mao/provider/stateprovider.dart';
+// import 'package:google_mao/provider/locationprovider.dart';
 import 'package:location/location.dart';
 import 'dart:math' show cos, sqrt, asin;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -31,10 +34,17 @@ class _LocationTrackState extends State<LocationTrack> {
   List<LatLng> polylineCoordinates = [];
   String currentAddress = '';
   double totalDistance = 0;
+  double latitude1 = 37.7749; // Replace with the actual latitude
+  double longitude1 = -122.4194; // Replace with the actual longitude
+  StateProvider? myProvider;
+  String fullAddress = "";
+
+  bool? _serviceEnabled;
+  PermissionStatus? _permissionGranted;
 
   
   final TripApiService tripService = TripApiService();
-
+  final CabApiService cabService=CabApiService();
   @override
   void initState() {
     
@@ -53,10 +63,11 @@ class _LocationTrackState extends State<LocationTrack> {
 
   @override
   Widget build(BuildContext context) {
+    myProvider=Provider.of<StateProvider>(context,listen: false);
     return Scaffold(
-      // appBar: AppBar(),
-      body: currentLocation == null
-          ? const SafeArea(
+      appBar: AppBar(),
+      body: _locationData == null
+          ? const SafeArea(  
             child: Center(
                 child: CircularProgressIndicator(),
             ),
@@ -96,99 +107,106 @@ class _LocationTrackState extends State<LocationTrack> {
                         ],
                       ),
                     ),),
-                    // RichText(
+                    RichText(
+                      text: TextSpan(
+                        style: const TextStyle(color: Colors.black),
+                        children: <TextSpan>[
+                         TextSpan(text: 'Address: ', style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: pinkColor,
+                            ),),
+                          TextSpan(
+                            text: fullAddress,
+                          ),
+                          ],
+                      ),),
+
+                    
+                    // Column(
+                    //   children: [
+                    //     SizedBox(
+                    //       child: Row(
+                    //         mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    //         children: [
+                        
+                    //         RichText(
+                    //       text: TextSpan(
+                    //         style: DefaultTextStyle.of(context).style,
+                    //         children: <TextSpan>[
+                    //          TextSpan(text: 'Latitude: ', style: TextStyle(
+                    //               fontWeight: FontWeight.bold,
+                    //               color: pinkColor,
+                    //             ),),
+                    //           const TextSpan(text:"0"
+                    //             // text: '${Provider.of<getLatitudeLongitude>(context).latitude}',
+                    //           ),
+                    //           ],
+                    //       ),),
+                    //       RichText(
+                    //       text: TextSpan(
+                    //         style: DefaultTextStyle.of(context).style,
+                    //         children: <TextSpan>[
+                    //          TextSpan(text: 'Longitude: ', style: TextStyle(
+                    //               fontWeight: FontWeight.bold,
+                    //               color: pinkColor,
+                    //             ),),
+                    //           const TextSpan(text:"0"
+                    //             // text: '${Provider.of<getLatitudeLongitude>(context).longitude}',
+                    //           ),
+                    //           ],
+                    //       ),), 
+                    //         ],
+                    //       ),
+                    //     ),
+                      
+                    // SizedBox(
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    //     children: [
+
+                    //     RichText(
                     //   text: TextSpan(
                     //     style: DefaultTextStyle.of(context).style,
                     //     children: <TextSpan>[
-                    //      TextSpan(text: 'Address: ', style: TextStyle(
+                    //      TextSpan(text: 'Total Miles: ', style: TextStyle(
                     //           fontWeight: FontWeight.bold,
                     //           color: pinkColor,
                     //         ),),
                     //       TextSpan(
-                    //         text: currentAddress,
+                    //         text: '${totalDistance.toStringAsFixed(1)} mi',
                     //       ),
                     //       ],
                     //   ),),
-
-                    
-                    SizedBox(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-
-                        RichText(
-                      text: TextSpan(
-                        style: DefaultTextStyle.of(context).style,
-                        children: <TextSpan>[
-                         TextSpan(text: 'Latitude: ', style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: pinkColor,
-                            ),),
-                          TextSpan(
-                            text: '${Provider.of<getLatitudeLongitude>(context).latitude}',
-                          ),
-                          ],
-                      ),),
-                      RichText(
-                      text: TextSpan(
-                        style: DefaultTextStyle.of(context).style,
-                        children: <TextSpan>[
-                         TextSpan(text: 'Longitude: ', style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: pinkColor,
-                            ),),
-                          TextSpan(
-                            text: '${Provider.of<getLatitudeLongitude>(context).longitude}',
-                          ),
-                          ],
-                      ),), 
-                        ],
-                      ),
-                    ),
-
-
-                      
-                    SizedBox(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-
-                        RichText(
-                      text: TextSpan(
-                        style: DefaultTextStyle.of(context).style,
-                        children: <TextSpan>[
-                         TextSpan(text: 'Total Miles: ', style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: pinkColor,
-                            ),),
-                          TextSpan(
-                            text: '${totalDistance.toStringAsFixed(1)} mi',
-                          ),
-                          ],
-                      ),),
-                      RichText(
-                      text: TextSpan(
-                        style: DefaultTextStyle.of(context).style,
-                        children: <TextSpan>[
-                         TextSpan(text: 'Charge: ', style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: pinkColor,
-                            ),),
-                          TextSpan(
-                            text: '\$${(totalDistance * 2.66).toStringAsFixed(1)}',
-                          ),
-                          ],
-                      ),),
-                          // Text('Total Miles: ${totalDistance.toStringAsFixed(1)} mi'),
-                          //  Text('Charge: \$ ${(totalDistance * 2.66).toStringAsFixed(1)}'),
+                    //   RichText(
+                    //   text: TextSpan(
+                    //     style: DefaultTextStyle.of(context).style,
+                    //     children: <TextSpan>[
+                    //      TextSpan(text: 'Charge: ', style: TextStyle(
+                    //           fontWeight: FontWeight.bold,
+                    //           color: pinkColor,
+                    //         ),),
+                    //       TextSpan(
+                    //         text: '\$${(totalDistance * 2.66).toStringAsFixed(1)}',
+                    //       ),
+                    //       ],
+                    //   ),),
+                    //       // Text('Total Miles: ${totalDistance.toStringAsFixed(1)} mi'),
+                    //       //  Text('Charge: \$ ${(totalDistance * 2.66).toStringAsFixed(1)}'),
                   
 
-                        ],
-                      ),
-                    ),
+                    //     ],
+                    //   ),
+                    // ),
+                    //   ],
+                    // ),
 
+
+                    // Text("$fullAddress"),
                    Expanded(
                      child: GoogleMap(
+                      onTap: (LatLng location) {
+                        print('Tapped Location: $location');
+                           },
                               onMapCreated: ((GoogleMapController controller) => _mapController.complete(controller)),
                                 initialCameraPosition:CameraPosition(
                                   target:LatLng(currentLocation!.latitude,currentLocation!.longitude),
@@ -228,20 +246,29 @@ class _LocationTrackState extends State<LocationTrack> {
   }
   
   Future<void> getInitialLocation() async {
-    
-        _locationData = await location.getLocation();
+      _serviceEnabled = await location.serviceEnabled();
+      if (!_serviceEnabled!) {
+    _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled!) {
+           return;
+      }
+      } 
+      _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+        _permissionGranted = await location.requestPermission();
+    if (_permissionGranted != PermissionStatus.granted) {
+       return;
+      }
+    }
+    _locationData = await location.getLocation();
+    location.enableBackgroundMode(enable: true);
         setState(() {
             currentLocation =LatLng(_locationData!.latitude!, _locationData!.longitude!);
             _pGooglePlex=currentLocation!;
             focusLocation();
            
           });
-         
-          //  try{
-          //   getAddress();
-          //   }catch(err){
-          //     print(err);
-          //   }
+    getAddress();
 
   }
 
@@ -309,17 +336,41 @@ class _LocationTrackState extends State<LocationTrack> {
   }
   
   Future<void> getAddress() async {
-    await geocoding
-        .placemarkFromCoordinates(
-            currentLocation!.latitude, currentLocation!.longitude)
-        .then((List<geocoding.Placemark> placemarks) {
-      geocoding.Placemark place = placemarks[0];
-      setState(() {
-        currentAddress ='${place.street}, ${place.subLocality}, ${place.postalCode}';
-      });
-    }).catchError((e) {
-      debugPrint(e);
-    });
+    try {
+      List<geocoding.Placemark> placemarks = await geocoding.placemarkFromCoordinates(currentLocation!.latitude, currentLocation!.longitude);
+      //  List<geocoding.Placemark> placemarks = await geocoding.placemarkFromCoordinates(11.082428307352208, 79.42625295720761);
+
+      if (placemarks != null && placemarks.isNotEmpty) {
+        geocoding.Placemark firstPlacemark = placemarks.first;
+        setState((){
+        fullAddress = "${firstPlacemark.subThoroughfare} ${firstPlacemark.thoroughfare}, "
+            "${firstPlacemark.locality}, ${firstPlacemark.administrativeArea} "
+            "${firstPlacemark.postalCode}, ${firstPlacemark.country}";
+        });
+        cabService.StartAddress(myProvider!.Token,myProvider!.carId,fullAddress);
+      } else {
+        fullAddress = "No address found";
+      }
+    } catch (e) {
+      print("Error getting address: $e");
+      fullAddress = "Error getting address";
+    }
+
+    // await geocoding
+    //     .placemarkFromCoordinates(
+    //         currentLocation!.latitude, currentLocation!.longitude)
+    // await geocoding
+    //     .placemarkFromCoordinates(
+    //         11.082428307352208, 79.42625295720761)
+    //     .then((List<geocoding.Placemark> placemarks) {
+    //   geocoding.Placemark place = placemarks[0];
+    //   setState(() {
+    //     fullAddress=currentAddress ='${place.street}, ${place.subLocality}, ${place.postalCode}';
+    //   });
+    //   print(currentAddress);
+    // }).catchError((e) {
+    //   // debugPrint(e);
+    // });
   }
    double calculateDistance(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;

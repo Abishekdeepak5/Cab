@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_mao/api/cab_service.dart';
+import 'package:google_mao/components/map/trip_map.dart';
 import 'package:google_mao/provider/stateprovider.dart';
 import 'package:provider/provider.dart';
 
@@ -31,8 +32,11 @@ class _AssociatedCabsState extends State<AssociatedCabs> {
                   alignment: Alignment.topCenter,
                   child: ElevatedButton(
                     onPressed: () async{
-                      cabService.StartCab(Provider.of<StateProvider>(context,listen: false).Token,Provider.of<StateProvider>(context,listen: false).carNumber).then((value) {
+                      cabService.StartCab(Provider.of<StateProvider>(context,listen: false).Token,Provider.of<StateProvider>(context,listen: false).carNumber,Provider.of<StateProvider>(context,listen: false).carId).then((value) {
                         if(value){
+                          Navigator.push(
+                                context,MaterialPageRoute(builder: (context) =>LocationTrack()),
+                            );
                             print("Trip Start");
                         }
                       });
@@ -57,34 +61,61 @@ class _AssociatedCabsState extends State<AssociatedCabs> {
                   ),
                 ),
 
-                Container(
-                  alignment: Alignment.topCenter,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      cabService.endCab(Provider.of<StateProvider>(context,listen: false).Token,Provider.of<StateProvider>(context,listen: false).carNumber);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(
-                          255, 44, 105, 46), 
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(
-                              0), // Set border radius to 0 for rectangular shape
-                        ),
-                      ),
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                      child: Text(
-                        'End Trip',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ),
+                // Container(
+                //   alignment: Alignment.topCenter,
+                //   child: ElevatedButton(
+                //     onPressed: () {
+                //       cabService.endCab(Provider.of<StateProvider>(context,listen: false).Token,Provider.of<StateProvider>(context,listen: false).carNumber,Provider.of<StateProvider>(context,listen: false).carId);
+                //     },
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: const Color.fromARGB(
+                //           255, 44, 105, 46), 
+                //       shape: const RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.all(
+                //           Radius.circular(
+                //               0), // Set border radius to 0 for rectangular shape
+                //         ),
+                //       ),
+                //     ),
+                //     child: const Padding(
+                //       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                //       child: Text(
+                //         'End Trip',
+                //         style: TextStyle(color: Colors.white),
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 const SizedBox(height: 20),
                 const Text('cab', style: TextStyle(fontSize: 20)),
                 Text(Provider.of<StateProvider>(context).carNumber!=""?Provider.of<StateProvider>(context).carNumber:'6666', style: TextStyle(fontSize: 30)),
+               
+                // Container(
+                //   alignment: Alignment.topCenter,
+                //   child: ElevatedButton(
+                //     onPressed: () {
+                //       cabService.StartAddress(Provider.of<StateProvider>(context,listen: false).Token,Provider.of<StateProvider>(context,listen: false).carId,"Veerakkan");
+                //     },
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: const Color.fromARGB(
+                //           255, 44, 105, 46), 
+                //       shape: const RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.all(
+                //           Radius.circular(
+                //               0), // Set border radius to 0 for rectangular shape
+                //         ),
+                //       ),
+                //     ), 
+                //     child: const Padding(
+                //       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                //       child: Text(
+                //         'Set Address',
+                //         style: TextStyle(color: Colors.white),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+
               ],
             ),
             if(isLoading)

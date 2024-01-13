@@ -24,34 +24,34 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState(){
     super.initState();
   }
-   Future<void> checkToken(BuildContext context)async {
-          String token=Provider.of<StateProvider>(context).Token;
-          if(token!=""){
-            bool isValid=await user.checkToken(token);
-            if(!isValid){
-               Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => SignInPage()),
-            );
-            }
-            print(token);
+  //  Future<void> checfkToken(BuildContext context)async {
+  //         String token=Provider.of<StateProvider>(context).Token;
+  //         if(token!=""){
+  //           bool isValid=await user.checkToken(token);
+  //           if(!isValid){
+  //              Navigator.pushReplacement(context,
+  //             MaterialPageRoute(builder: (context) => SignInPage()),
+  //           );
+  //           }
+  //           print(token);
             
-          }
-          else{
-             Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const SignInPage()),
-            );
-          }
-   }
+  //         }
+  //         else{
+  //            Navigator.pushReplacement(
+  //             context,
+  //             MaterialPageRoute(builder: (context) => const SignInPage()),
+  //           );
+  //         }
+  //  }
   final List<Widget> _pages = [
     
-    // const LocationTracking(),
     // MyStream(),
     // ClientListen()
+    // const LocationTracking(),
     // const LocationTrack(),
     // MyHomePagenew(),
     CabContriant(),
-    // const TripHistoryPage(),
+    const TripHistoryPage(),
   ];
   @override
   Widget build(BuildContext context) {

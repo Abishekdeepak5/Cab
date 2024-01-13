@@ -3,10 +3,13 @@ import 'package:google_mao/models/login.dart';
 import 'package:http/http.dart' show Client;
 
 class UserApiService {
-  final String baseUrl = "https://localhost:7048";
+  // final String baseUrl = "https://localhost:7048";
+  final String baseUrl = "https://meterproservice.azurewebsites.net";
+
   Client client = Client();
 
    Future<UserDetail> LoginUser(Login data) async {
+    try{
     final response = await client.post(
       Uri.parse("$baseUrl/login"),
       headers: {"content-type": "application/json"},
@@ -19,6 +22,9 @@ class UserApiService {
      else {
       print(response.statusCode);
       return UserDetail(firstname: "Hello", lastname: "Hello", token:"");
+    }}catch(err){
+      print("error");
+      return UserDetail(firstname: "No internet", lastname: "Hello", token:"");
     }
   }
 

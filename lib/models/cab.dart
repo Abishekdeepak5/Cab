@@ -1,21 +1,22 @@
 import 'dart:convert';
 
 class Cab {
-  String cabNumber;
-  Cab({required this.cabNumber});
+  int cabId;
+  String carNumber;
+  Cab({required this.carNumber,required this.cabId});
 
   factory Cab.fromJson(Map<String, dynamic> map) {
-    return Cab(cabNumber: map["carNumber"]);
+    return Cab(carNumber: map["carNumber"],cabId:map["id"]);
   }
 
   Map<String, dynamic> toJson() {
-    return {"cabNumber": cabNumber};
+    return {"cabId":cabId,"carNumber": carNumber};
   }
 
 
   @override
   String toString() {
-    return 'Cab{cabNumber: $cabNumber}';
+    return 'Cab{"cabId":$cabId,carNumber: $carNumber}';
   }
 }
 Cab CabFromJson(String jsonData) {

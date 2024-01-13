@@ -77,13 +77,15 @@ class _CabContriantState extends State<CabContriant> {
                     onPressed: () {
                       setLoad(true);
                       cabService.getAvaiableCar().then((value) {
-                        print("helo ${value.cabNumber}");
-                            if(value.cabNumber!=""){
-                            Provider.of<StateProvider>(context,listen:false).setCarNumber(value.cabNumber);
+                        // print("helo ${value.cabNumber}");
+                              print(value);
+                            if(value.carNumber!=""){
+                            Provider.of<StateProvider>(context,listen:false).setCarNumber(value.carNumber,value.cabId);
                               setLoad(false);
                               Navigator.push(
                                 context,MaterialPageRoute(builder: (context) =>AssociatedCabs()),
                             );
+                            setLoad(false);
                             }
                             else{
                               setLoad(false);
