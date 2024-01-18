@@ -5,6 +5,42 @@ import 'package:google_mao/models/login.dart';
 import 'package:google_mao/provider/stateprovider.dart';
 import 'package:google_mao/ui/home_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class AuthenticationWrapper extends StatelessWidget {
+  // const AuthenticationWrapper({super.key});
+late StateProvider myProvider;
+  @override
+  Widget build(BuildContext context) {
+  myProvider=Provider.of<StateProvider>(context,listen:false);
+    return FutureBuilder(
+      // Check if the user is authenticated
+      future: isAuthenticated(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // If the Future is still running, show a loading indicator
+          return CircularProgressIndicator();
+        } else {
+          if(snapshot.data == true){
+
+          }
+          return snapshot.data == true ?  HomeScreen():SignInPage();
+        }
+      },
+    );
+  }
+  Future<bool> isAuthenticated() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? items = prefs.getStringList('token');
+    myProvider.setToken(UserDetail(firstname: items![0], lastname:items![1] , token: items![2]));
+    if(items?.length==0 || items==null){
+      return false;
+    }
+    else{
+    return true;
+    }
+  }
+}
 
 class SignInPage extends StatefulWidget {
    const SignInPage({super.key});
@@ -122,9 +158,12 @@ class _SignInPageState extends State<SignInPage> {
                           // Login user=Login(username: username,password: password);
                           Login user=Login(username: "Abishek",password: "Abishek123");
 
-                          userService.LoginUser(user).then((value) {
+                          userService.LoginUser(user).then((value) async {
                             if(value.token!=""){
+                            Provider.of<StateProvider>(context,listen:false).testing(value.token);  
                             Provider.of<StateProvider>(context,listen:false).setToken(value);
+                              final SharedPreferences prefs = await SharedPreferences.getInstance();
+                              prefs.setStringList('token', <String>[value.firstname, value.lastname, value.token]);
                               setLoad(false);
                             Navigator.of(context).canPop()?
                               Navigator.pop(context, true):

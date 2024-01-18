@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:google_mao/models/HistoryModel.dart';
 import 'package:google_mao/models/LocationModel.dart';
 import 'package:http/http.dart' show Client;
 
@@ -18,13 +19,26 @@ class TripApiService {
     }
   }
    Future<List<Trip>> getTrip() async {
-    final response = await client.get(Uri.parse("$baseUrl/Trip/allTrip"));
+    final response = await client.get(Uri.parse("$baseUrl/Trip"));
     if (response.statusCode == 200) {
       return LocationFromJson(response.body);
     } else {
       return [];
     }
   }
+
+   Future<List<TripsHistory>> getHistory(String token) async {
+     final response = await client.get(
+      Uri.parse("$baseUrl/Trip"),
+      headers: {"content-type": "application/json",'Authorization': 'Bearer $token'}
+    );
+    if (response.statusCode == 200) {
+      return HistoryFromJson(response.body);
+    } else {
+      return [];
+    }
+  }
+
   Future<bool> updateLocations(Trip data) async {
     final response = await client.put(
       Uri.parse("$baseUrl?id=${data.id}"),

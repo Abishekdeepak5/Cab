@@ -20,8 +20,8 @@ class _AssociatedCabsState extends State<AssociatedCabs> {
     }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
+    // ignore: deprecated_member_use
+    return  Scaffold(
       body: Stack(
         children: [
           Column(
@@ -34,10 +34,10 @@ class _AssociatedCabsState extends State<AssociatedCabs> {
                     onPressed: () async{
                       cabService.StartCab(Provider.of<StateProvider>(context,listen: false).Token,Provider.of<StateProvider>(context,listen: false).carNumber,Provider.of<StateProvider>(context,listen: false).carId).then((value) {
                         if(value){
+                          // Provider.of<StateProvider>(context,listen: false).setCabStart(true);
                           Navigator.push(
                                 context,MaterialPageRoute(builder: (context) =>LocationTrack()),
                             );
-                            print("Trip Start");
                         }
                       });
                     },
@@ -60,62 +60,10 @@ class _AssociatedCabsState extends State<AssociatedCabs> {
                     ),
                   ),
                 ),
-
-                // Container(
-                //   alignment: Alignment.topCenter,
-                //   child: ElevatedButton(
-                //     onPressed: () {
-                //       cabService.endCab(Provider.of<StateProvider>(context,listen: false).Token,Provider.of<StateProvider>(context,listen: false).carNumber,Provider.of<StateProvider>(context,listen: false).carId);
-                //     },
-                //     style: ElevatedButton.styleFrom(
-                //       backgroundColor: const Color.fromARGB(
-                //           255, 44, 105, 46), 
-                //       shape: const RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.all(
-                //           Radius.circular(
-                //               0), // Set border radius to 0 for rectangular shape
-                //         ),
-                //       ),
-                //     ),
-                //     child: const Padding(
-                //       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                //       child: Text(
-                //         'End Trip',
-                //         style: TextStyle(color: Colors.white),
-                //       ),
-                //     ),
-                //   ),
-                // ),
+    
                 const SizedBox(height: 20),
                 const Text('cab', style: TextStyle(fontSize: 20)),
                 Text(Provider.of<StateProvider>(context).carNumber!=""?Provider.of<StateProvider>(context).carNumber:'6666', style: TextStyle(fontSize: 30)),
-               
-                // Container(
-                //   alignment: Alignment.topCenter,
-                //   child: ElevatedButton(
-                //     onPressed: () {
-                //       cabService.StartAddress(Provider.of<StateProvider>(context,listen: false).Token,Provider.of<StateProvider>(context,listen: false).carId,"Veerakkan");
-                //     },
-                //     style: ElevatedButton.styleFrom(
-                //       backgroundColor: const Color.fromARGB(
-                //           255, 44, 105, 46), 
-                //       shape: const RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.all(
-                //           Radius.circular(
-                //               0), // Set border radius to 0 for rectangular shape
-                //         ),
-                //       ),
-                //     ), 
-                //     child: const Padding(
-                //       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                //       child: Text(
-                //         'Set Address',
-                //         style: TextStyle(color: Colors.white),
-                //       ),
-                //     ),
-                //   ),
-                // ),
-
               ],
             ),
             if(isLoading)

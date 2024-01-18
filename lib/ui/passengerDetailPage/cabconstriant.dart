@@ -76,9 +76,7 @@ class _CabContriantState extends State<CabContriant> {
                     ),
                     onPressed: () {
                       setLoad(true);
-                      cabService.getAvaiableCar().then((value) {
-                        // print("helo ${value.cabNumber}");
-                              print(value);
+                      cabService.getAvaiableCar().then((value) async {
                             if(value.carNumber!=""){
                             Provider.of<StateProvider>(context,listen:false).setCarNumber(value.carNumber,value.cabId);
                               setLoad(false);
@@ -92,9 +90,6 @@ class _CabContriantState extends State<CabContriant> {
                               print("Failed");
                             }
                           });
-                      // Navigator.push(context,
-                      //   MaterialPageRoute(builder: (context) => const AssociatedCabs()),
-                      // );
                     },
                     child: const Text(
                       "Start Trip",

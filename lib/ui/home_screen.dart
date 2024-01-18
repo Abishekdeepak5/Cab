@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_mao/Hubs/client_listen.dart';
 import 'package:google_mao/api/user_api.dart';
+import 'package:google_mao/components/History/triphistory.dart';
 import 'package:google_mao/components/map/location_traking.dart';
 import 'package:google_mao/components/map/trip_map.dart';
 import 'package:google_mao/components/user_crud/webapi.dart';
@@ -51,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // const LocationTrack(),
     // MyHomePagenew(),
     CabContriant(),
-    const TripHistoryPage(),
+    TripHistory(),
   ];
   @override
   Widget build(BuildContext context) {

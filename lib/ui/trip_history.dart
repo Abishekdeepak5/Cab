@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_mao/components/History/triphistory.dart';
 
 class TripHistoryPage extends StatelessWidget {
   const TripHistoryPage({super.key});
@@ -35,6 +36,7 @@ class TripHistoryPage extends StatelessWidget {
                 ),
               ),
             ),
+            TripHistory(),
           ],
         ),
       ),

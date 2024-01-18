@@ -7,10 +7,12 @@ class StateProvider with ChangeNotifier{
   String firstname="";
   String lastname="";
   String token="";
-    String carNum="";
-    int carid=0;
-  // bool loginLoad=false;
-  // bool get loginLoader=>loginLoad;
+  String carNum="";
+  int carid=0;
+  bool iscabstart=false;
+  String testString="";
+  String get testStr=>testString;
+  bool get isCabStart=>iscabstart;
   double get latitude=>lat;
   double get longitude=>lng;
   String get carNumber=>carNum;
@@ -25,6 +27,10 @@ class StateProvider with ChangeNotifier{
     notifyListeners();
   }
 
+  void testing(String s){
+    testString=s;
+    notifyListeners();
+  }
   
   updateLocation(Object latitude,Object longitude){
     try{
@@ -49,10 +55,9 @@ class StateProvider with ChangeNotifier{
     notifyListeners();
   }
 
-  // setSignInLoader(bool val){
-  //   print("Bool $val");
-  //   loginLoad=val;
-  //   notifyListeners();
-  // }
+  void setCabStart(bool val){
+    iscabstart=val;
+    notifyListeners();
+  }
 
 }

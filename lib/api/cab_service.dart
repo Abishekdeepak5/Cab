@@ -28,6 +28,7 @@ class CabApiService {
   }
 
   Future<bool> StartCab(String token,String cabNum,int id)async{
+    try{
     final response = await client.put(
       Uri.parse("$baseUrl/api/Cab/startCab"),
       headers: {"content-type": "application/json",'Authorization': 'Bearer $token'},
@@ -39,13 +40,19 @@ class CabApiService {
       print(response.statusCode);
       return false;
     }
+    }catch(err){
+      return false;
+    }
   }
 
-  Future<bool> endCab(String token, String carNumber,int id) async{
+  Future<bool> endCab(String token, int id,String address,double price) async{
+    try{
+    Map<String, dynamic> data = {'cabId':id,'endAddress': address,'price':price};
+    String jsonString = json.encode(data);
     final response = await client.put(
       Uri.parse("$baseUrl/api/Cab/endCab"),
       headers: {"content-type": "application/json",'Authorization': 'Bearer $token'},
-      body: CabToJson(Cab(carNumber: carNumber,cabId:id)),
+      body: jsonString,
     );
     if (response.statusCode == 200) {
       print("Trip end");
@@ -54,9 +61,13 @@ class CabApiService {
       print(response.statusCode);
       return false;
     }
+    }catch(err){
+      return false;
+    }
   }
 
-  Future<void> StartAddress(String token, int carId, String startAddress) async {
+  Future<bool> StartAddress(String token, int carId, String startAddress) async {
+    try{
     Map<String, dynamic> data = {'cabId':carId,'startAddress': startAddress,};
     String jsonString = json.encode(data);
     
@@ -66,9 +77,12 @@ class CabApiService {
       body: jsonString,
     );
     if (response.statusCode == 200) {
-      print("Address update");
+      return true;
     } else {
-      print(response.statusCode);
+      return false;
+    }
+    }catch(err){
+      return false;
     }
   }
 
