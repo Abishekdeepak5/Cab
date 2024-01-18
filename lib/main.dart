@@ -1,21 +1,18 @@
-import 'package:flutter/material.dart';
-import 'package:google_mao/components/map/trip_map.dart';
-import 'package:google_mao/provider/stateprovider.dart';
-import 'package:google_mao/provider/locationprovider.dart';
-import 'package:google_mao/ui/home_screen.dart';
-import 'package:google_mao/ui/signin.dart';
 import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:google_mao/provider/stateprovider.dart';
+import 'package:google_mao/ui/signIn.dart';
 import 'package:provider/provider.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => StateProvider()),
-        // Provider(create: (context) => getLatitudeLongitude()),
-      ],
-    child:const MyApp()),);
+    MultiProvider(providers: [
+      ChangeNotifierProvider(create: (context) => StateProvider()),
+      // Provider(create: (context) => getLatitudeLongitude()),
+    ], child: const MyApp()),
+  );
 }
 
 class MyHttpOverrides extends HttpOverrides {
@@ -33,8 +30,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return 
-    MaterialApp(
+    return MaterialApp(
       title: 'Avecsage',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -47,7 +43,7 @@ class MyApp extends StatelessWidget {
 
       // home:
       // Provider.of<StateProvider>(context).Token==""?SignInPage(): HomeScreen(),
-      home:AuthenticationWrapper() ,
+      home: AuthenticationWrapper(),
       // home:const HomeScreen(),
     );
   }
