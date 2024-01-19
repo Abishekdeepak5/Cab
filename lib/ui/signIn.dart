@@ -151,13 +151,17 @@ class _SignInPageState extends State<SignInPage> {
                         shape:const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4)))
                         ),
                         onPressed: () {
-                          //  String username = _emailController.text;
-                          //   String password = _passwordController.text;
+                           String username = _emailController.text;
+                            String password = _passwordController.text;
   
                           setLoad(true);
-                          // Login user=Login(username: username,password: password);
-                          Login user=Login(username: "Abishek",password: "Abishek123");
-
+                          if(username=="" || password==""){
+                              setLoad(false);  
+                              _displayMessage(context, 'Please fill username', const Duration(seconds: 3)); 
+                            // user=Login(username: "Abishek",password: "Abishek123");
+                          }
+                          else{
+                            Login user=Login(username: username,password: password);
                           userService.LoginUser(user).then((value) async {
                             if(value.token!=""){
                             Provider.of<StateProvider>(context,listen:false).testing(value.token);  
@@ -176,8 +180,7 @@ class _SignInPageState extends State<SignInPage> {
                                 _displayMessage(context, 'Login Failed', const Duration(seconds: 3));                            
                             }
                           });
-                          
-                
+                          }
                           },
                         child: const Text('Sign In',style: TextStyle(fontSize: 18,color: Colors.white),),
                       ),
