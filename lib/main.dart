@@ -8,11 +8,11 @@ import 'package:provider/provider.dart';
 void main() {
   HttpOverrides.global = MyHttpOverrides();
   runApp(
-    MultiProvider(providers: [
-      ChangeNotifierProvider(create: (context) => StateProvider()),
-      // Provider(create: (context) => getLatitudeLongitude()),
-    ], child: const MyApp()),
-  );
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => StateProvider()),
+      ],
+    child:const MyApp()),);
 }
 
 class MyHttpOverrides extends HttpOverrides {
@@ -26,8 +26,6 @@ class MyHttpOverrides extends HttpOverrides {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -40,11 +38,7 @@ class MyApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-
-      // home:
-      // Provider.of<StateProvider>(context).Token==""?SignInPage(): HomeScreen(),
-      home: AuthenticationWrapper(),
-      // home:const HomeScreen(),
+      home:AuthenticationWrapper() ,
     );
   }
 }
