@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_mao/api/cab_service.dart';
+import 'package:google_mao/api/user_api.dart';
+import 'package:google_mao/components/constants.dart';
 import 'package:google_mao/provider/stateprovider.dart';
 import 'package:google_mao/ui/associated_cabs.dart';
 import 'package:google_mao/ui/passengerDetailPage/inputWidget.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CabContriant extends StatefulWidget {
   CabContriant({super.key});
@@ -26,12 +29,23 @@ class _CabContriantState extends State<CabContriant> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        
         Padding(
             padding: const EdgeInsets.only(right: 0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+          // Text(Provider.of<StateProvider>(context,listen: true).Token),
+
+  //         ElevatedButton(
+              //   onPressed: () async {
+              //      UserApiService user=UserApiService();
+              //      print(Provider.of<StateProvider>(context,listen: false).tripId);
+              //      //int isValid=await user.checkToken(Provider.of<StateProvider>(context,listen: false).token,Provider.of<StateProvider>(context,listen: false));
+              //   },
+              //   child: Text("Click"),
+                // ),
                 const Padding(
                   padding: EdgeInsets.only(bottom: 50, right: 40),
                   child: Column(
@@ -106,14 +120,9 @@ class _CabContriantState extends State<CabContriant> {
             ),
           ),
           if(isLoading)
-          Container(
-              color: Colors.black.withOpacity(0.5),
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
-        
+          LoadingOverlay(),
       ],
     );
   }
 }
+

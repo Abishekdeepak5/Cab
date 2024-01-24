@@ -1,18 +1,23 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_mao/api/cab_service.dart';
+import 'package:google_mao/api/image_api.dart';
 import 'package:google_mao/api/trip_api_service.dart';
 import 'package:google_mao/components/constants.dart';
 import 'package:google_mao/components/user_crud/update_location.dart';
 // import 'package:geocoder/geocoder.dart';
 import 'package:google_mao/models/LocationModel.dart';
 import 'package:google_mao/provider/stateprovider.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 // import 'package:google_mao/provider/locationprovider.dart';
 import 'package:location/location.dart';
 import 'dart:math' show asin, atan2, cos, pi, sin, sqrt;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:provider/provider.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:geolocator/geolocator.dart';
 
 class LocationTrack extends StatefulWidget {
   const LocationTrack({super.key});
@@ -50,11 +55,18 @@ class _LocationTrackState extends State<LocationTrack> {
   
   final TripApiService tripService = TripApiService();
   final CabApiService cabService=CabApiService();
+   bool isLoading=false;
+  ScreenshotController screenshotController = ScreenshotController();
+   Marker _sourceMarker=Marker(markerId: MarkerId("source"));
+  Marker _destinationMarker = Marker(markerId: MarkerId("destination"));
+  late BuildContext context1;
+
   @override
   void initState() {
     loadContent();
     getInitialLocation();
      setCustomMarkerIcon();
+     setLoad(false);
     super.initState();
   }
 
@@ -65,16 +77,24 @@ class _LocationTrackState extends State<LocationTrack> {
     polylineCoordinates = [];
     locationSubscription?.cancel();
     _mapController = Completer<GoogleMapController>();
+    // setLoad(false);
     // stopListening();
     // endTrip();
     super.dispose();
   }
+  void setLoad(bool val){
+    if(mounted){
+    setState((){
+        isLoading=val;
+    });}
+    }
  Future<void> loadContent() async {
     getInitialLocation();
     await Future.delayed(Duration(seconds: 3));
+    if(mounted){
     setState(() {
       showRefreshButton = true;
-    });
+    });}
   }
   void setCustomMarkerIcon() {
     BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, "assets/car.jpg")
@@ -86,11 +106,17 @@ class _LocationTrackState extends State<LocationTrack> {
   }
   @override
   Widget build(BuildContext context) {
+    context1=context;
     myProvider=Provider.of<StateProvider>(context,listen: false);
-    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async{ 
-        return false;
+        if(!isStart){
+          Navigator.of(context).pop();
+          return true;
+        }
+        else{
+          return false;
+        }
        },
       child: Scaffold(
         body: _locationData == null
@@ -100,9 +126,10 @@ class _LocationTrackState extends State<LocationTrack> {
               ? ElevatedButton(
                   onPressed: () {
                     // Add your refresh logic here
+                    if(mounted){
                     setState(() {
                       showRefreshButton = false;
-                    });
+                    });}
                     // Optionally, you can trigger content loading again
                     loadContent();
                   },
@@ -110,231 +137,267 @@ class _LocationTrackState extends State<LocationTrack> {
                 ):CircularProgressIndicator(),
               ),
             )
-            : SafeArea(
-              child: Center(
-                child: Column(
-                  children:[
-                    Padding(
-                        padding: const EdgeInsets.only(top:3,bottom: 3),
-                      child: SizedBox(
-                        height: 30,
-                        child: 
-                        
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            isStart?
-                            ElevatedButton(
-                            style:ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                            onPressed: () async{
-                                bool val=await getAddress();
-                                bool value=await cabService.endCab(Provider.of<StateProvider>(context,listen: false).Token,Provider.of<StateProvider>(context,listen: false).carId,fullAddress,totalDistance * 2.66);
-                                if(val && value){
-                                  locationSubscription?.cancel();
-                                  bool val1=await endTrip();
-                                  if(val1){
-                                    // googleMapController.dispose();
-                                     googleMapController=null;
-                                    _mapController = Completer<GoogleMapController>();
-                                  Navigator.of(context).pop();
-                                  Navigator.of(context).pop();
-                                  }
-                                }
-                                else{
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Press Again"),
-                                      duration: Duration(seconds: 3),
-                                    ),
-                                  );
-                                }
-                                // await getAddress().then((value) {
-                                // if(value){
-                                //   cabService.endCab(Provider.of<StateProvider>(context,listen: false).Token,Provider.of<StateProvider>(context,listen: false).carId,fullAddress,totalDistance * 2.66);
-                                //   endTrip();
-                                //   Navigator.of(context).pop();
-                                //   Navigator.of(context).pop();
-                                // }
-                                // else{
-                                //   ScaffoldMessenger.of(context).showSnackBar(
-                                //     const SnackBar(
-                                //       content: Text("Press Again"),
-                                //       duration: Duration(seconds: 3),
-                                //     ),
-                                //   );
-                                // }
-                                // }
-                                // );
-                               },
-                            child: const Text("End",
-                                style: TextStyle(color: Colors.white)),
-                                              )
-                             :
-                            ElevatedButton(
-                            style:ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                            onPressed: () async{
-                              await updateAddress().then((value) {
-                                if(value){
-                                setState((){
-                                  isStart=true;
-                                });
-                                currentLocation == null ?getInitialLocation(): getLiveLocation();
-                                }
-                                else{
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Press Again"),
-                                      duration: Duration(seconds: 3),
-                                    ),
-                                  );
-                                }
-                              }
-                              );
-                               },
-                            child: const Text("Start",
-                                style: TextStyle(color: Colors.white)),
-                                              ),
-                            
-      
-                          
-                          Switch(
-                             value: isCameraFollow,  
-                             activeColor: Colors.blue,  
-                             activeTrackColor: lightPink,  
-                             inactiveThumbColor: Colors.redAccent,  
-                             inactiveTrackColor: lightPink, 
-                             onChanged: (bool value) { 
-                              changeCameraAction(value);
-                              },  
-                             )  ,
-                          ],
-                        ),
-                      ),),
-                      
-                        Column(
-                          children:[
-                             SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
+            : Stack(
+              children: [Screenshot(
+                 controller: screenshotController,
+                child: SafeArea(
+                  child: Center(
+                    child: Container(
+                      color:Colors.white,
+                      child: Column(
+                        children:[
+                          Padding(
+                              padding: const EdgeInsets.only(top:3,bottom: 3),
+                            child: SizedBox(
+                              height: 30,
+                              child: 
+                              
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
+                                  isStart?
                                   ElevatedButton(
                                   style:ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                                  onPressed: () {
-                                      getAddress();
-                                    
+                                  onPressed: () async{
+                                    try{
+                                       setLoad(true);
+                                       changeCameraAction(false);
+                                      bool isCameraBound=await updateCameraBounds(context);
+                                      bool val=await getAddress();
+                                      await Future.delayed(const Duration(seconds: 1));
+                                      if(val && isCameraBound){
+                                       screenshotController
+                                      .capture(delay: Duration(milliseconds: 10))
+                                      .then((capturedImage) async {
+                                          //  bool isImageUpload= await sendUpdatedImage(capturedImage!,context,Provider.of<StateProvider>(context,listen: false).Token);
+                                           bool value=await cabService.endCab(Provider.of<StateProvider>(context,listen: false).Token,Provider.of<StateProvider>(context,listen: false).carId,fullAddress,totalDistance * 2.66);
+                                            // if(isImageUpload && value){
+                                            if(value){
+                                              locationSubscription?.cancel();
+                                              bool val1=await endTrip();
+                                              if(val1){
+                                                // googleMapController.dispose();
+                                                 googleMapController=null;
+                                                _mapController = Completer<GoogleMapController>();
+                                              setLoad(false);
+                                              Navigator.of(context).pop();
+                                              Navigator.of(context).pop();
+                                          }}
+                                          else{
+                                          setLoad(false);
+                                          PopUpMessage.displayMessage(context, 'Try Again',3);
+                                          }
+                                      }).catchError((onError) {
+                                        setLoad(false);
+                                        PopUpMessage.displayMessage(context, 'Try Again',3);
+                                        print(onError);
+                                      });
+                                      // bool value=await cabService.endCab(Provider.of<StateProvider>(context,listen: false).Token,Provider.of<StateProvider>(context,listen: false).carId,fullAddress,totalDistance * 2.66);
+                                      // if(val && value){
+                                      //   locationSubscription?.cancel();
+                                      //   bool val1=await endTrip();
+                                      //   if(val1){
+                                      //     // googleMapController.dispose();
+                                      //      googleMapController=null;
+                                      //     _mapController = Completer<GoogleMapController>();
+                                      //   setLoad(false);
+                                      //   Navigator.of(context).pop();
+                                      //   Navigator.of(context).pop();
+                                      //   }
+                                      // }
+                                      }
+                                      else{
+                                        setLoad(false);
+                                        PopUpMessage.displayMessage(context, 'Try Again',3);
+                                      }}
+                                      catch(err){
+                                      setLoad(false);
+                                      PopUpMessage.displayMessage(context, 'Try Again $err',3);
+                                    }
                                      },
-                                  child: const Text("Get Address",
+                                  child: const Text("End",
+                                      style: TextStyle(color: Colors.white)),
+                                                    )
+                                   :
+                                  ElevatedButton(
+                                  style:ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                                  onPressed: () async{
+                                    setLoad(true);
+                                    await updateAddress(context).then((value) {
+                                      if(value){
+                                        if(mounted){
+                                      setState((){
+                                        isStart=true;
+                                      });}
+                                      currentLocation == null ?getInitialLocation(): getLiveLocation();
+                                      setLoad(false);
+                                      }
+                                      else{
+                                        setLoad(false);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text("Press Again"),
+                                            duration: Duration(seconds: 3),
+                                          ),
+                                        );
+                                      }
+                                    }
+                                    );
+                                     },
+                                  child: const Text("Start",
                                       style: TextStyle(color: Colors.white)),
                                                     ),
-                            RichText(
-                            overflow: TextOverflow.ellipsis,
-                            text: TextSpan(
-                            style: const TextStyle(color: Colors.black,
-                            ),
-                            children: <TextSpan>[
-                            // TextSpan(text: 'Address: ', style: TextStyle(
-                            //     fontWeight: FontWeight.bold,
-                            //     color: pinkColor,
-                            //   ),
-                            //   ),
-                              TextSpan(
-                              text: fullAddress,
-                              
+                                Switch(
+                                   value: isCameraFollow,  
+                                   activeColor: Colors.blue,  
+                                   activeTrackColor: lightPink,  
+                                   inactiveThumbColor: Colors.redAccent,  
+                                   inactiveTrackColor: lightPink, 
+                                   onChanged: (bool value) { 
+                                    changeCameraAction(value);
+                                    },  
+                                   )  ,
+                                ],
                               ),
-                            ],
-                        ),),
+                            ),),
+                            
+                              Column(
+                                children:[
+                                   SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: [
+                                        ElevatedButton(
+                                        style:ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                                        onPressed: () {
+                                            getAddress();
+                                           },
+                                        child: const Text("Address",
+                                            style: TextStyle(color: Colors.white)),
+                                                          ),
+                                  RichText(
+                                  overflow: TextOverflow.ellipsis,
+                                  text: TextSpan(
+                                  style: const TextStyle(color: Colors.black,
+                                  ),
+                                  children: <TextSpan>[
+                                  // TextSpan(text: 'Address: ', style: TextStyle(
+                                  //     fontWeight: FontWeight.bold,
+                                  //     color: pinkColor,
+                                  //   ),
+                                  //   ),
+                                    TextSpan(
+                                    text: fullAddress,
+                                    
+                                    ),
+                                  ],
+                              ),),
+                                      ],
+                                    ),
+                                  ),
+                                ]
+                        
+                              ),
+                            Column(
+                              children: [
+                            SizedBox(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                        
+                                RichText(
+                              text: TextSpan(
+                                style:  const TextStyle(color: Colors.black,
+                                  ),
+                                children: <TextSpan>[
+                                 TextSpan(text: 'Total Miles: ', style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: pinkColor,
+                                    ),),
+                                  TextSpan(
+                                    text: '${totalDistance.toStringAsFixed(1)} mi',
+                                  ),
+                                  ],
+                              ),),
+                              RichText(
+                              text: TextSpan(
+                                style: const TextStyle(color: Colors.black,
+                                  ),
+                                children: <TextSpan>[
+                                 TextSpan(text: 'Charge: ', style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: pinkColor,
+                                    ),),
+                                  TextSpan(
+                                    text: '\$${(totalDistance * 2.66).toStringAsFixed(1)}',
+                                  ),
+                                  ],
+                              ),),
+                                  // Text('Total Miles: ${totalDistance.toStringAsFixed(1)} mi'),
+                                  //  Text('Charge: \$ ${(totalDistance * 2.66).toStringAsFixed(1)}'),
+                          
+                        
                                 ],
                               ),
                             ),
-                          ]
-      
-                        ),
-                      Column(
-                        children: [
-                      SizedBox(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-      
-                          RichText(
-                        text: TextSpan(
-                          style:  const TextStyle(color: Colors.black,
+                              ],
                             ),
-                          children: <TextSpan>[
-                           TextSpan(text: 'Total Miles: ', style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: pinkColor,
-                              ),),
-                            TextSpan(
-                              text: '${totalDistance.toStringAsFixed(1)} mi',
-                            ),
-                            ],
-                        ),),
-                        RichText(
-                        text: TextSpan(
-                          style: const TextStyle(color: Colors.black,
-                            ),
-                          children: <TextSpan>[
-                           TextSpan(text: 'Charge: ', style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: pinkColor,
-                              ),),
-                            TextSpan(
-                              text: '\$${(totalDistance * 2.66).toStringAsFixed(1)}',
-                            ),
-                            ],
-                        ),),
-                            // Text('Total Miles: ${totalDistance.toStringAsFixed(1)} mi'),
-                            //  Text('Charge: \$ ${(totalDistance * 2.66).toStringAsFixed(1)}'),
-                    
-      
-                          ],
-                        ),
-                      ),
-                        ],
-                      ),
-      
-      
-                      // Text("$fullAddress"),
-                     Expanded(
-                       child: GoogleMap(
-                        onTap: (LatLng location) {
-                          print('Tapped Location: $location');
-                             },
-                                onMapCreated: ((GoogleMapController controller) => _mapController.complete(controller)),
-                                  initialCameraPosition:CameraPosition(
-                                    target:LatLng(currentLocation!.latitude,currentLocation!.longitude),
-                                    zoom:13) ,
-                                    // onCameraMove: (pos){
-                                      // isCameraFollow=false;
-                                      // print("Hello ${pos.target}");
-                                    // }, 
-                              polylines: {
-                                Polyline(
-                                  polylineId: const PolylineId("route"),
-                                  points: polylineCoordinates,
-                                  color: const Color.fromARGB(255, 40, 4, 222),
-                                  width: 6,
-                                  ),
+                        
+                        
+                            // Text("$fullAddress"),
+                           Expanded(
+                             child: GoogleMap(
+                              onTap: (LatLng location) {
+                                //  _destinationMarker = _destinationMarker.copyWith(
+                                //         positionParam: LatLng(location.latitude, location.longitude), // Default destination location
+                                //      );
+                                   },
+                                      onMapCreated: ((GoogleMapController controller) => _mapController.complete(controller)),
+                                        initialCameraPosition:CameraPosition(
+                                          target:LatLng(currentLocation!.latitude,currentLocation!.longitude),
+                                          zoom:13) ,
+                                    polylines: {
+                                      Polyline(
+                                        polylineId: const PolylineId("route"),
+                                        points: polylineCoordinates,
+                                        color: const Color.fromARGB(255, 40, 4, 222),
+                                        width: 6,
+                                        ),
+                                      },
+                        
+                                               markers: {
+                                Marker(
+                                  markerId: const MarkerId("_currentLocation"),
+                                  icon: currentLocationIcon,
+                                  position: currentLocation!,
+                                  rotation: markerAngle,
+                                ),
+                                _sourceMarker,
+                                  _destinationMarker,
                                 },
-      
-                                         markers: {
-                          Marker(
-                            markerId: const MarkerId("_currentLocation"),
-                            icon: currentLocationIcon,
-                            position: currentLocation!,
-                            rotation: markerAngle,
-                          ),},
-                          onCameraMove: _cameraMove,
-                                       ),
-                     ),]
+                                 
+                                // onCameraMove: _cameraMove,
+                                             ),
+                           ),]
+                      ),
+                    ),
+                  ),
                 ),
               ),
+               if(isLoading)
+                LoadingOverlay(),
+              ]
             ),
           
           floatingActionButton: FloatingActionButton(
           onPressed: () {
-            focusLiveLocation();
+             setLoad(false);
+            // focusLiveLocation();
+            changeCameraAction(false);
+            updateCameraBounds(context);
+          //    _sourceMarker = _sourceMarker.copyWith(
+          //   positionParam: LatLng(currentLocation!.latitude, currentLocation!.longitude), // Default source location
+          // );
           },
           child: const Icon(Icons.location_searching),
         ),
@@ -359,12 +422,13 @@ class _LocationTrackState extends State<LocationTrack> {
     }
     _locationData = await location.getLocation();
     location.enableBackgroundMode(enable: true);
+        if(mounted){
         setState(() {
             currentLocation =LatLng(_locationData!.latitude!, _locationData!.longitude!);
             _pGooglePlex=currentLocation!;
             focusLocation();
            
-          });
+          });}
     getAddress();
     getLiveLocation();
 
@@ -407,7 +471,8 @@ double toDegrees(double radians) {
           polylineCoordinates[i + 1].latitude,
           polylineCoordinates[i + 1].longitude);
     }
-    setState(() {});
+    if(mounted){
+      setState(() {});}
   }
   double calculateDistance(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;
@@ -419,14 +484,19 @@ double toDegrees(double radians) {
   }
   Future<void> getLiveLocation() async {
     polylineCoordinates = [];
+//     const double MIN_DISTANCE_THRESHOLD = 5.0; // Adjust as needed
+// const int MIN_POLYLINE_POINTS = 2;
+// LocationData? previousLocation;
+// LatLng? previousLatLng;
     GoogleMapController googleMapController = await _mapController.future;
     locationSubscription = location.onLocationChanged.handleError((onError) {
      locationSubscription?.cancel();
+     if(mounted){
       setState(() {
         locationSubscription = null;
-      });
+      });}
     }).listen((LocationData updatedLocation) {
-      if(isCameraFollow){
+      if(isCameraFollow && mounted){
       googleMapController.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
@@ -438,7 +508,19 @@ double toDegrees(double radians) {
           ),
         ),
       );}
+      //  LatLng currentLatLng = LatLng(updatedLocation.latitude!, updatedLocation.longitude!);
+
+       
       // updateLatLng(LatLng(updatedLocation.latitude!,updatedLocation.longitude!));
+      // if (previousLocation != null &&
+      //   Geolocator.distanceBetween(
+      //     previousLatLng!.latitude,
+      //     previousLatLng!.longitude,
+      //     currentLatLng.latitude,
+      //     currentLatLng.longitude) < MIN_DISTANCE_THRESHOLD) {
+      //     return;
+      //  }
+          // PopUpMessage.displayMessage(context1, 'Hello', 1);
 
       var isLatitudeExist = polylineCoordinates
           .where((element) => element.latitude == updatedLocation.latitude);
@@ -452,25 +534,22 @@ double toDegrees(double radians) {
       currentLocation=LatLng(updatedLocation.latitude!,updatedLocation.longitude!);
       if(polylineCoordinates.length>=2){
         int len=polylineCoordinates.length;
+        if(mounted){
         setState((){
         markerAngle=calculateBearing(polylineCoordinates[len-2],polylineCoordinates[len-1]);
         });
+        }
       }
       if(isStart){
         drawPolyLine(updatedLocation.latitude!, updatedLocation.longitude!);
-        
       }
-      
+      else{
+        getAddress();
+      }
           }
       });
 
   }
-
-  // Future<void> updateLatLng(LatLng loc) async {
-  //   Trip trip = Trip(id: 3, latitude:loc.latitude,longitude:loc.longitude);
-  //   tripService.updateLocations(trip);
-
-  // }
 
   Future<void> focusLocation() async {
     googleMapController = await _mapController.future;
@@ -485,7 +564,8 @@ double toDegrees(double radians) {
         ),
       ),
     );
-    setState((){});
+    if(mounted){
+    setState((){});}
   }
   
   Future<bool> getAddress() async {
@@ -495,11 +575,12 @@ double toDegrees(double radians) {
 
       if (placemarks != null && placemarks.isNotEmpty) {
         geocoding.Placemark firstPlacemark = placemarks.first;
+        if(mounted){
         setState((){
         fullAddress = "${firstPlacemark.subThoroughfare} ${firstPlacemark.thoroughfare}, "
             "${firstPlacemark.locality}, ${firstPlacemark.administrativeArea} "
             "${firstPlacemark.postalCode}, ${firstPlacemark.country}";
-        });
+        });}
         return true;
       } else {
         getInitialLocation();
@@ -513,10 +594,19 @@ double toDegrees(double radians) {
     }
   }
 
-  Future<bool> updateAddress() async{
-    await Future.delayed(const Duration(seconds: 3));
+  Future<bool> updateAddress(BuildContext context) async{
     bool val=await getAddress();
-    bool isUpdate=await cabService.StartAddress(myProvider!.Token, myProvider!.carId, fullAddress);
+    bool isUpdate=await cabService.startAddress(myProvider!.Token, myProvider!.carId, fullAddress);
+    _sourceMarker = _sourceMarker.copyWith(
+            positionParam: LatLng(currentLocation!.latitude, currentLocation!.longitude), 
+          );
+    _destinationMarker = _destinationMarker.copyWith(
+            positionParam: LatLng(currentLocation!.latitude, currentLocation!.longitude), 
+          );
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? tripId=prefs.getInt('tripId');
+    myProvider!.testing('$tripId');
+    myProvider!.setTripId(tripId!);
     return val && isUpdate;
   }
 
@@ -531,9 +621,10 @@ double toDegrees(double radians) {
   
   stopListening() {
     locationSubscription?.cancel();
+    if(mounted){
     setState(() {
       locationSubscription = null;
-    });
+    });}
   }
 
  Future<bool> endTrip() async{
@@ -544,14 +635,45 @@ double toDegrees(double radians) {
 
 
   void changeCameraAction(bool val) {
-    setState(() {
+   if(mounted){ setState(() {
       isCameraFollow=val;
-    });
+    });}
   }  
 
-  void _cameraMove(CameraPosition position) {
-    // markerAngle=position as double;
-    // print(position);
+  Future<bool> updateCameraBounds(BuildContext context) async {
+    try{
+      _destinationMarker = _destinationMarker.copyWith(
+                                        positionParam: LatLng(currentLocation!.latitude, currentLocation!.longitude), // Default destination location
+      );
+      LatLngBounds bounds = LatLngBounds(
+    southwest: LatLng(
+      _sourceMarker.position.latitude < _destinationMarker.position.latitude
+          ? _sourceMarker.position.latitude
+          : _destinationMarker.position.latitude,
+      _sourceMarker.position.longitude < _destinationMarker.position.longitude
+          ? _sourceMarker.position.longitude
+          : _destinationMarker.position.longitude,
+    ),
+    northeast: LatLng(
+      _sourceMarker.position.latitude > _destinationMarker.position.latitude
+          ? _sourceMarker.position.latitude
+          : _destinationMarker.position.latitude,
+      _sourceMarker.position.longitude > _destinationMarker.position.longitude
+          ? _sourceMarker.position.longitude
+          : _destinationMarker.position.longitude,
+    ),
+  );
+    CameraUpdate cameraUpdate = CameraUpdate.newLatLngBounds(
+      bounds,
+      100.0, );
+    googleMapController = await _mapController.future;
+    googleMapController?.animateCamera(cameraUpdate);
+    }catch(err){
+      PopUpMessage.displayMessage(context, '$err', 3);
+        return false;
+    }
+
+    return true;
   }
 }
 

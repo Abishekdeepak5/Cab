@@ -10,7 +10,9 @@ class StateProvider with ChangeNotifier{
   String carNum="";
   int carid=0;
   bool iscabstart=false;
-  String testString="";
+  String testString="Hello";
+  int tripRowId=0;
+  int get tripId=>tripRowId;
   String get testStr=>testString;
   bool get isCabStart=>iscabstart;
   double get latitude=>lat;
@@ -57,6 +59,10 @@ class StateProvider with ChangeNotifier{
 
   void setCabStart(bool val){
     iscabstart=val;
+    notifyListeners();
+  }
+  void setTripId(int id){
+    tripRowId=id;
     notifyListeners();
   }
 

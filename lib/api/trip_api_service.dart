@@ -33,6 +33,7 @@ class TripApiService {
       "content-type": "application/json",
       'Authorization': 'Bearer $token'
     });
+    print(response.body);
     if (response.statusCode == 200) {
       return HistoryFromJson(response.body);
     } else {

@@ -10,16 +10,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthenticationWrapper extends StatelessWidget {
   // const AuthenticationWrapper({super.key});
 late StateProvider myProvider;
+
+  AuthenticationWrapper({super.key});
   @override
   Widget build(BuildContext context) {
   myProvider=Provider.of<StateProvider>(context,listen:false);
     return FutureBuilder(
       // Check if the user is authenticated
-      future: isAuthenticated(),
+      future: isAuthenticated(context),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // If the Future is still running, show a loading indicator
-          return CircularProgressIndicator();
+          return 
+          const Scaffold(
+        body: Center(
+        child: CircularProgressIndicator(),
+    ),);
         } else {
           if(snapshot.data == true){
 
@@ -29,19 +35,32 @@ late StateProvider myProvider;
       },
     );
   }
-  Future<bool> isAuthenticated() async {
+  Future<bool> isAuthenticated(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String>? items = prefs.getStringList('token');
-    myProvider.setToken(UserDetail(firstname: items![0], lastname:items![1] , token: items![2]));
     if(items?.length==0 || items==null){
       return false;
     }
     else{
-    return true;
+       UserApiService user=UserApiService();
+       int isValid=await user.checkToken(items![2],Provider.of<StateProvider>(context,listen:false));
+       if(isValid==204){
+        myProvider.setToken(UserDetail(firstname: items![0], lastname:items![1] , token: items![2]));
+        return true;
+       }
+      //  print("num $isVaid");
+       if(isValid==200){
+        // myProvider.setToken(UserDetail(firstname: items![0], lastname:items![1] , token: items![2]));
+        myProvider.testing('new token');
+        return true;
+       }
+       else{
+        return false;
+       }
     }
   }
 }
-
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFiaXNoZWsiLCJpZCI6IjEiLCJuYmYiOjE3MDU3MzIxOTgsImV4cCI6MTcwNjMzNjk5OCwiaWF0IjoxNzA1NzMyMTk4LCJpc3MiOiJ1c2VyIiwiYXVkIjoidXNlciJ9.rly5OXVWEFe8IUNYPAmlWn9zwCRhkSmut62flD4ukXg
 class SignInPage extends StatefulWidget {
    const SignInPage({super.key});
 
@@ -157,7 +176,8 @@ class _SignInPageState extends State<SignInPage> {
                           setLoad(true);
                           if(username=="" || password==""){
                               setLoad(false);  
-                              _displayMessage(context, 'Please fill username', const Duration(seconds: 3)); 
+                              PopUpMessage.displayMessage(context, 'Please Fill Fields',3);
+
                             // user=Login(username: "Abishek",password: "Abishek123");
                           }
                           else{
@@ -176,8 +196,8 @@ class _SignInPageState extends State<SignInPage> {
                             );
                             }
                             else{
-                              setLoad(false);  
-                                _displayMessage(context, 'Login Failed', const Duration(seconds: 3));                            
+                              setLoad(false);   
+                                PopUpMessage.displayMessage(context, 'Login Failed',  3);
                             }
                           });
                           }
@@ -191,23 +211,11 @@ class _SignInPageState extends State<SignInPage> {
             ),
           ),
           if(isLoading)
-          Container(
-              color: Colors.black.withOpacity(0.5),
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
+         LoadingOverlay(),
         ],
       ),
     );
   }
 }
 
- void _displayMessage(BuildContext context, String message, Duration duration) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: duration,
-      ),
-    );
-  }
+ 

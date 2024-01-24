@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_mao/api/cab_service.dart';
+import 'package:google_mao/components/constants.dart';
 import 'package:google_mao/components/map/trip_map.dart';
 import 'package:google_mao/provider/stateprovider.dart';
 import 'package:provider/provider.dart';
@@ -32,14 +33,14 @@ class _AssociatedCabsState extends State<AssociatedCabs> {
                   alignment: Alignment.topCenter,
                   child: ElevatedButton(
                     onPressed: () async{
-                      cabService.StartCab(Provider.of<StateProvider>(context,listen: false).Token,Provider.of<StateProvider>(context,listen: false).carNumber,Provider.of<StateProvider>(context,listen: false).carId).then((value) {
-                        if(value){
-                          // Provider.of<StateProvider>(context,listen: false).setCabStart(true);
                           Navigator.push(
                                 context,MaterialPageRoute(builder: (context) =>LocationTrack()),
                             );
-                        }
-                      });
+                      // cabService.StartCab(Provider.of<StateProvider>(context,listen: false).Token,Provider.of<StateProvider>(context,listen: false).carNumber,Provider.of<StateProvider>(context,listen: false).carId).then((value) {
+                      //   if(value){
+                      //     // Provider.of<StateProvider>(context,listen: false).setCabStart(true);
+                      //   }
+                      // });
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(
@@ -67,12 +68,7 @@ class _AssociatedCabsState extends State<AssociatedCabs> {
               ],
             ),
             if(isLoading)
-            Container(
-              color: Colors.black.withOpacity(0.5),
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
+            LoadingOverlay(), 
         ],
       ),
     );

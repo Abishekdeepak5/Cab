@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:google_mao/Hubs/client_listen.dart';
 import 'package:google_mao/api/user_api.dart';
+import 'package:google_mao/components/History/trip_image.dart';
 import 'package:google_mao/components/History/triphistory.dart';
-import 'package:google_mao/components/map/location_traking.dart';
-import 'package:google_mao/components/map/trip_map.dart';
-import 'package:google_mao/components/user_crud/webapi.dart';
+import 'package:google_mao/components/map/screenshot_map.dart';
 import 'package:google_mao/provider/stateprovider.dart';
 import 'package:google_mao/ui/drawer/drawer.dart';
 import 'package:google_mao/ui/passengerDetailPage/cabconstriant.dart';
 import 'package:google_mao/ui/signin.dart';
-import 'package:google_mao/ui/trip_history.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -24,35 +21,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState(){
     super.initState();
+    // checkToken(context);
   }
-  //  Future<void> checfkToken(BuildContext context)async {
-  //         String token=Provider.of<StateProvider>(context).Token;
-  //         if(token!=""){
-  //           bool isValid=await user.checkToken(token);
-  //           if(!isValid){
-  //              Navigator.pushReplacement(context,
-  //             MaterialPageRoute(builder: (context) => SignInPage()),
-  //           );
-  //           }
-  //           print(token);
-            
-  //         }
-  //         else{
-  //            Navigator.pushReplacement(
-  //             context,
-  //             MaterialPageRoute(builder: (context) => const SignInPage()),
-  //           );
-  //         }
-  //  }
   final List<Widget> _pages = [
-    
-    // MyStream(),
-    // ClientListen()
-    // const LocationTracking(),
-    // const LocationTrack(),
-    // MyHomePagenew(),
     CabContriant(),
     TripHistory(),
+    // MyHomePage(title: 'Screenshot Demo Home Page'),
+    // ImageDisplay(imageId: 177),
   ];
   @override
   Widget build(BuildContext context) {
@@ -104,8 +79,58 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: const MyDrawer(),
 
 
-      body:_pages[pageindex >= _pages.length?0:pageindex],
+      body:WillPopScope(
+         onWillPop: () => _onWillPop(context),
+      child: _pages[pageindex >= _pages.length?0:pageindex]
+      ),
       // body:,
+    );
+    
+  }
+// Future<void> checkToken(BuildContext context)async {
+//           String token=Provider.of<StateProvider>(context).Token;
+//           if(token!=""){
+//             bool isValid=await user.checkToken(token);
+            
+//             if(!isValid){
+//                Navigator.pushReplacement(context,
+//               MaterialPageRoute(builder: (context) => SignInPage()),
+//             );
+//             }
+//             print(token);
+            
+//           }
+//           else{
+//              Navigator.pushReplacement(
+//               context,
+//               MaterialPageRoute(builder: (context) => const SignInPage()),
+//             );
+//           }
+//    }
+ 
+  Future<bool> _onWillPop(BuildContext context) async {
+    return await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Are you sure you want to exit?'),
+          content: Text('Pressing back again will close the app.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false); // Return false to cancel the pop.
+              },
+              child: Text('No'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true); // Return true to allow the pop.
+              },
+              child: Text('Yes'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

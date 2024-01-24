@@ -1,10 +1,15 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:google_mao/components/constants.dart';
 import 'package:google_mao/models/cab.dart';
+import 'package:google_mao/provider/stateprovider.dart';
 import 'package:http/http.dart' show Client;
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CabApiService {
   // final String baseUrl = "https://localhost:7048";
-  final String baseUrl = "https://meterproservice1.azurewebsites.net";
+  final String baseUrl = "https://meterproservice.azurewebsites.net";
 
   Client client = Client();
 
@@ -25,26 +30,6 @@ class CabApiService {
     }
   }
 
-  Future<bool> StartCab(String token, String cabNum, int id) async {
-    try {
-      final response = await client.put(
-        Uri.parse("$baseUrl/api/Cab/startCab"),
-        headers: {
-          "content-type": "application/json",
-          'Authorization': 'Bearer $token'
-        },
-        body: CabToJson(Cab(carNumber: cabNum, cabId: id)),
-      );
-      if (response.statusCode == 200) {
-        return true;
-      } else {
-        print(response.statusCode);
-        return false;
-      }
-    } catch (err) {
-      return false;
-    }
-  }
 
   Future<bool> endCab(
       String token, int id, String address, double price) async {
@@ -75,9 +60,9 @@ class CabApiService {
     }
   }
 
-  Future<bool> StartAddress(
-      String token, int carId, String startAddress) async {
+  Future<bool> startAddress(String token, int carId, String startAddress) async {
     try {
+       final SharedPreferences prefs = await SharedPreferences.getInstance();
       Map<String, dynamic> data = {
         'cabId': carId,
         'startAddress': startAddress,
@@ -92,7 +77,10 @@ class CabApiService {
         },
         body: jsonString,
       );
+      print(response.statusCode);
       if (response.statusCode == 200) {
+        int id=int.parse(response.body);
+        prefs.setInt('tripId', id);
         return true;
       } else {
         return false;
@@ -102,3 +90,29 @@ class CabApiService {
     }
   }
 }
+
+
+
+
+
+
+  // Future<bool> StartCab(String token, String cabNum, int id) async {
+  //   try {
+  //     final response = await client.put(
+  //       Uri.parse("$baseUrl/api/Cab/startCab"),
+  //       headers: {
+  //         "content-type": "application/json",
+  //         'Authorization': 'Bearer $token'
+  //       },
+  //       body: CabToJson(Cab(carNumber: cabNum, cabId: id)),
+  //     );
+  //     if (response.statusCode == 200) {
+  //       return true;
+  //     } else {
+  //       print(response.statusCode);
+  //       return false;
+  //     }
+  //   } catch (err) {
+  //     return false;
+  //   }
+  // }
