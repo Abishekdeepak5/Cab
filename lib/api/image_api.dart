@@ -29,13 +29,26 @@ Future<bool> sendUpdatedImage(Uint8List updatedImage,BuildContext context,String
     var uri = Uri.parse('$baseUrl/RecScreenshot/$tripId');
     // var uri = Uri.parse('https://localhost:7048/api/Image/RecScreenshot/$tripId');
     var request = http.MultipartRequest('POST', uri);
-    request.files.add(http.MultipartFile.fromBytes(
-      'file',
-      updatedImage,
-      filename: 'screenshot.jpg', 
-    ));
+    // 'tripId': '123',
+    request.fields.addAll({
+    'emailDto.Subject': 'MeterPro Trip',
+    'emailDto.Message': 'MeterPro Trip , Thank you!',
+  });
+    // request.files.add(http.MultipartFile.fromBytes(
+    //   'file',
+    //   updatedImage,
+    //   filename: 'screenshot.jpg', 
+    // ));
+    request.files.add(
+    await http.MultipartFile.fromBytes(
+      'emailDto.formFile',
+            updatedImage,
+            filename: 'screenshot.jpg',
+    ),
+  );
     request.headers['Authorization'] = 'Bearer $token';
     var response = await request.send();
+    // PopUpMessage.displayMessage(context, await response.stream.bytesToString(), 10);
      if (response.statusCode == 200) {
       print('Image uploaded successfully!');
       // print(await response.stream.bytesToString());
@@ -45,6 +58,8 @@ Future<bool> sendUpdatedImage(Uint8List updatedImage,BuildContext context,String
       return false;
     }
   }catch(err){
+    PopUpMessage.displayMessage(context, 'errr $err', 1);
+
     print('error $err') ;
     return false;
   }

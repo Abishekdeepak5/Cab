@@ -4,6 +4,7 @@ import 'package:google_mao/api/cab_service.dart';
 import 'package:google_mao/api/image_api.dart';
 import 'package:google_mao/api/trip_api_service.dart';
 import 'package:google_mao/components/constants.dart';
+import 'package:google_mao/components/map/map_methods.dart';
 import 'package:google_mao/components/user_crud/update_location.dart';
 // import 'package:geocoder/geocoder.dart';
 import 'package:google_mao/models/LocationModel.dart';
@@ -59,7 +60,7 @@ class _LocationTrackState extends State<LocationTrack> {
   ScreenshotController screenshotController = ScreenshotController();
    Marker _sourceMarker=Marker(markerId: MarkerId("source"));
   Marker _destinationMarker = Marker(markerId: MarkerId("destination"));
-  late BuildContext context1;
+  BuildContext? context1;
 
   @override
   void initState() {
@@ -169,10 +170,10 @@ class _LocationTrackState extends State<LocationTrack> {
                                        screenshotController
                                       .capture(delay: Duration(milliseconds: 10))
                                       .then((capturedImage) async {
-                                          //  bool isImageUpload= await sendUpdatedImage(capturedImage!,context,Provider.of<StateProvider>(context,listen: false).Token);
+                                            bool isImageUpload= await sendUpdatedImage(capturedImage!,context,Provider.of<StateProvider>(context,listen: false).Token);
                                            bool value=await cabService.endCab(Provider.of<StateProvider>(context,listen: false).Token,Provider.of<StateProvider>(context,listen: false).carId,fullAddress,totalDistance * 2.66);
-                                            // if(isImageUpload && value){
-                                            if(value){
+                                            if(isImageUpload && value){
+                                            // if(value){
                                               locationSubscription?.cancel();
                                               bool val1=await endTrip();
                                               if(val1){
@@ -398,6 +399,8 @@ class _LocationTrackState extends State<LocationTrack> {
           //    _sourceMarker = _sourceMarker.copyWith(
           //   positionParam: LatLng(currentLocation!.latitude, currentLocation!.longitude), // Default source location
           // );
+          var dist=calculateLocationDistance(LatLng(_sourceMarker.position.latitude, _sourceMarker.position.longitude),LatLng(_destinationMarker.position.latitude,_destinationMarker.position.longitude));
+          PopUpMessage.displayMessage(context, '$dist', 5);
           },
           child: const Icon(Icons.location_searching),
         ),
@@ -484,10 +487,10 @@ double toDegrees(double radians) {
   }
   Future<void> getLiveLocation() async {
     polylineCoordinates = [];
-//     const double MIN_DISTANCE_THRESHOLD = 5.0; // Adjust as needed
+     const double MIN_DISTANCE_THRESHOLD = 0.05; 
 // const int MIN_POLYLINE_POINTS = 2;
 // LocationData? previousLocation;
-// LatLng? previousLatLng;
+  //  LatLng? previousLatLng;
     GoogleMapController googleMapController = await _mapController.future;
     locationSubscription = location.onLocationChanged.handleError((onError) {
      locationSubscription?.cancel();
@@ -508,20 +511,6 @@ double toDegrees(double radians) {
           ),
         ),
       );}
-      //  LatLng currentLatLng = LatLng(updatedLocation.latitude!, updatedLocation.longitude!);
-
-       
-      // updateLatLng(LatLng(updatedLocation.latitude!,updatedLocation.longitude!));
-      // if (previousLocation != null &&
-      //   Geolocator.distanceBetween(
-      //     previousLatLng!.latitude,
-      //     previousLatLng!.longitude,
-      //     currentLatLng.latitude,
-      //     currentLatLng.longitude) < MIN_DISTANCE_THRESHOLD) {
-      //     return;
-      //  }
-          // PopUpMessage.displayMessage(context1, 'Hello', 1);
-
       var isLatitudeExist = polylineCoordinates
           .where((element) => element.latitude == updatedLocation.latitude);
       var isLongitudeExist = polylineCoordinates
@@ -532,8 +521,8 @@ double toDegrees(double radians) {
           isLongitudeExist.isEmpty) {
             
       currentLocation=LatLng(updatedLocation.latitude!,updatedLocation.longitude!);
-      if(polylineCoordinates.length>=2){
         int len=polylineCoordinates.length;
+      if(polylineCoordinates.length>=2){
         if(mounted){
         setState((){
         markerAngle=calculateBearing(polylineCoordinates[len-2],polylineCoordinates[len-1]);
@@ -541,11 +530,17 @@ double toDegrees(double radians) {
         }
       }
       if(isStart){
+      if(polylineCoordinates.isNotEmpty){
+        double dist=calculateLocationDistance(polylineCoordinates[len-1],currentLocation!);
+        if(dist>MIN_DISTANCE_THRESHOLD){
         drawPolyLine(updatedLocation.latitude!, updatedLocation.longitude!);
-      }
-      else{
-        getAddress();
-      }
+        // if(context1!=null){PopUpMessage.displayMessage(context1!, '$dist', 2);}
+        }}
+        else{
+        drawPolyLine(updatedLocation.latitude!, updatedLocation.longitude!);
+        }
+        }
+      else{getAddress();}
           }
       });
 
@@ -643,7 +638,7 @@ double toDegrees(double radians) {
   Future<bool> updateCameraBounds(BuildContext context) async {
     try{
       _destinationMarker = _destinationMarker.copyWith(
-                                        positionParam: LatLng(currentLocation!.latitude, currentLocation!.longitude), // Default destination location
+          positionParam: LatLng(currentLocation!.latitude, currentLocation!.longitude), 
       );
       LatLngBounds bounds = LatLngBounds(
     southwest: LatLng(

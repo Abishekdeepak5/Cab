@@ -80,6 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       sendUpdatedImage(capturedImage!,context,Provider.of<StateProvider>(context,listen: false).Token); 
                   // ShowCapturedWidget(context, capturedImage!);
                 }).catchError((onError) {
+                  // PopMessage.displayMessage()
                   print(onError);
                 });
               },

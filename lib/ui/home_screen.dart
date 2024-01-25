@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _pages = [
     CabContriant(),
     TripHistory(),
-    // MyHomePage(title: 'Screenshot Demo Home Page'),
+    MyHomePage(title: 'Screenshot Demo Home Page'),
     // ImageDisplay(imageId: 177),
   ];
   @override
