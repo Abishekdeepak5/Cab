@@ -100,29 +100,35 @@ class _ImageDisplayState extends State<ImageDisplay> {
                 },
                 child: Padding(
                   padding: EdgeInsets.all(16.0),
-                  child: Image.network(
-                    imageUrl,
-                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                      if (loadingProgress == null) {
-                        return child;
-                      } else {
-                        return Center(
-                          child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    (loadingProgress.expectedTotalBytes ?? 1)
-                                : null,
-                          ),
-                        );
-                      }
-                    },
-                    errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                      return ElevatedButton(
-                        onPressed: (){
-                           _refreshImage();
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children:[
+                        // Text("Hello"),
+                         Image.network(
+                        imageUrl,
+                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child;
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        (loadingProgress.expectedTotalBytes ?? 1)
+                                    : null,
+                              ),
+                            );
+                          }
                         },
-                        child: const Text('Refresh'));
-                    },
+                        errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                          return ElevatedButton(
+                            onPressed: (){
+                               _refreshImage();
+                            },
+                            child: const Text('Refresh'));
+                        },
+                      ),],
+                    ),
                   ),
                 ),
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_mao/api/cab_service.dart';
 import 'package:google_mao/api/user_api.dart';
 import 'package:google_mao/components/constants.dart';
@@ -19,6 +20,7 @@ class _CabContriantState extends State<CabContriant> {
   
   final CabApiService cabService=CabApiService();
   bool isLoading=false;
+   bool isStart=true;
   void setLoad(bool val){
     setState((){
         isLoading=val;
@@ -38,13 +40,15 @@ class _CabContriantState extends State<CabContriant> {
               children: [
           // Text(Provider.of<StateProvider>(context,listen: true).Token),
 
-  //         ElevatedButton(
-              //   onPressed: () async {
-              //      UserApiService user=UserApiService();
-              //      print(Provider.of<StateProvider>(context,listen: false).tripId);
-              //      //int isValid=await user.checkToken(Provider.of<StateProvider>(context,listen: false).token,Provider.of<StateProvider>(context,listen: false));
-              //   },
-              //   child: Text("Click"),
+          // ElevatedButton(
+          //       onPressed: () {
+          //         var date=DateTime.now().toIso8601String();
+                  // PopUpMessage.displayMessage(context, '$date', 3);
+                   //UserApiService user=UserApiService();
+                   //print(Provider.of<StateProvider>(context,listen: false).tripId);
+                   //int isValid=await user.checkToken(Provider.of<StateProvider>(context,listen: false).token,Provider.of<StateProvider>(context,listen: false));
+                // },
+                // child: Text("Click"),
                 // ),
                 const Padding(
                   padding: EdgeInsets.only(bottom: 50, right: 40),
@@ -125,4 +129,3 @@ class _CabContriantState extends State<CabContriant> {
     );
   }
 }
-

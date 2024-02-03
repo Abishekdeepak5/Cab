@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_mao/api/user_api.dart';
-import 'package:google_mao/components/History/trip_image.dart';
 import 'package:google_mao/components/History/triphistory.dart';
-import 'package:google_mao/components/map/screenshot_map.dart';
 import 'package:google_mao/provider/stateprovider.dart';
 import 'package:google_mao/ui/drawer/drawer.dart';
 import 'package:google_mao/ui/passengerDetailPage/cabconstriant.dart';
@@ -26,8 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _pages = [
     CabContriant(),
     TripHistory(),
-    MyHomePage(title: 'Screenshot Demo Home Page'),
-    // ImageDisplay(imageId: 177),
   ];
   @override
   Widget build(BuildContext context) {
@@ -83,6 +79,9 @@ class _HomeScreenState extends State<HomeScreen> {
          onWillPop: () => _onWillPop(context),
       child: _pages[pageindex >= _pages.length?0:pageindex]
       ),
+      // floatingActionButton: Align(alignment: Alignment.bottomLeft,
+      // child:FloatingActionButton(onPressed: () {  },
+      // child: IconButton( icon:Icon(Icons.add), onPressed: () {  },)),),
       // body:,
     );
     

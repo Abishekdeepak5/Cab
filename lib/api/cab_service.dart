@@ -31,17 +31,21 @@ class CabApiService {
   }
 
 
-  Future<bool> endCab(
-      String token, int id, String address, double price) async {
+  Future<bool> endCab(String token, int id, String address, double price,double miles) async {
     try {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+        int? tripId=prefs.getInt('tripId');
+    // var uri = Uri.parse('$baseUrl/RecScreenshot/$tripId');
       Map<String, dynamic> data = {
         'cabId': id,
         'endAddress': address,
-        'price': price
+        'endTime':DateTime.now().toIso8601String(),
+        'price': price,
+        'miles':miles
       };
       String jsonString = json.encode(data);
       final response = await client.put(
-        Uri.parse("$baseUrl/api/Cab/endCab"),
+        Uri.parse("$baseUrl/api/Cab/endCab/$tripId"),
         headers: {
           "content-type": "application/json",
           'Authorization': 'Bearer $token'
@@ -49,7 +53,6 @@ class CabApiService {
         body: jsonString,
       );
       if (response.statusCode == 200) {
-        print("Trip end");
         return true;
       } else {
         print(response.statusCode);
@@ -66,6 +69,7 @@ class CabApiService {
       Map<String, dynamic> data = {
         'cabId': carId,
         'startAddress': startAddress,
+        'startTime':DateTime.now().toIso8601String(),
       };
       String jsonString = json.encode(data);
 

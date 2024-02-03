@@ -46,6 +46,6 @@
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-<string>Some description</string>
+	<string>Some description</string>
 </dict>
 </plist>

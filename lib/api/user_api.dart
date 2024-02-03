@@ -6,7 +6,6 @@ import 'package:http/http.dart' show Client;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserApiService {
-  // final String baseUrl = "https://localhost:7048";
   final String baseUrl = "https://meterproservice.azurewebsites.net";
 
   Client client = Client();

@@ -27,9 +27,14 @@ Future<bool> sendUpdatedImage(Uint8List updatedImage,BuildContext context,String
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     int? tripId=prefs.getInt('tripId');
     var uri = Uri.parse('$baseUrl/RecScreenshot/$tripId');
-    // var uri = Uri.parse('https://localhost:7048/api/Image/RecScreenshot/$tripId');
     var request = http.MultipartRequest('POST', uri);
     // 'tripId': '123',
+    request.files.add(http.MultipartFile.fromBytes(
+      'emailDto.formFile',
+            updatedImage,
+            filename: 'screenshot.jpg',
+    ),
+  );
     request.fields.addAll({
     'emailDto.Subject': 'MeterPro Trip',
     'emailDto.Message': 'MeterPro Trip , Thank you!',
@@ -39,16 +44,10 @@ Future<bool> sendUpdatedImage(Uint8List updatedImage,BuildContext context,String
     //   updatedImage,
     //   filename: 'screenshot.jpg', 
     // ));
-    request.files.add(
-    await http.MultipartFile.fromBytes(
-      'emailDto.formFile',
-            updatedImage,
-            filename: 'screenshot.jpg',
-    ),
-  );
     request.headers['Authorization'] = 'Bearer $token';
     var response = await request.send();
     // PopUpMessage.displayMessage(context, await response.stream.bytesToString(), 10);
+    // PopUpMessage.displayMessage(context, '${response.statusCode}', 3);
      if (response.statusCode == 200) {
       print('Image uploaded successfully!');
       // print(await response.stream.bytesToString());

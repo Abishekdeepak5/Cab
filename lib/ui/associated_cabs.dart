@@ -1,10 +1,11 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mao/api/cab_service.dart';
 import 'package:google_mao/components/constants.dart';
 import 'package:google_mao/components/map/trip_map.dart';
 import 'package:google_mao/provider/stateprovider.dart';
+import 'package:google_mao/ui/signIn.dart';
 import 'package:provider/provider.dart';
-
 class AssociatedCabs extends StatefulWidget {
   AssociatedCabs({super.key});
   @override
@@ -19,6 +20,21 @@ class _AssociatedCabsState extends State<AssociatedCabs> {
         isLoading=val;
     });
     }
+
+  @override
+  void initState(){
+    super.initState();
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
+
+  }
+  @override
+  void dispose(){
+    super.dispose();
+
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+  }
+
   @override
   Widget build(BuildContext context) {
     // ignore: deprecated_member_use
