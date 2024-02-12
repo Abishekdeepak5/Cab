@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\lib",
+    "\\lib\\api",
+    "\\lib\\components",
+    "\\lib\\components\\crud",
+    "\\lib\\models"
+  ],
+  "SelectedNode": "\\lib\\components\\crud\\form_page.dart",
+  "PreviewInSolutionExplorer": false
+}
